@@ -1,0 +1,14 @@
+*.ipynb
+.ipynb_checkpoints
+*.py~
+/src/__pycache__
+*.log
+*.aux
+*.synctex.gz
+*.bbl
+*.blg
+*.out
+*.toc
+*.npy
+*#
+*.jl~

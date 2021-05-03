@@ -64,16 +64,15 @@ def plot_infected_stoch(T,v,Ts,V):
     fig.savefig(FIG_PATH + "2Bb_I.pdf")
 
 
-def plot_probabilities(probs,stds):
-    I = np.arange(1,11)
+def plot_probabilities(probs,stds, x, path):
 
     fig,ax =  plt.subplots()
-    plt.plot(I,probs,
+    plt.plot(x,probs,
              label = r"$P(\mathrm{outbreak} | I)$",
              ls = "",
              marker = "o",
              color = "b")
-    ax.errorbar(I,y = probs, yerr = stds, xerr = 0 ,
+    ax.errorbar(x,y = probs, yerr = stds, xerr = 0 ,
                 color="black",
                 ls = "",
                 label = "Normalised standard deviation")
@@ -86,4 +85,4 @@ def plot_probabilities(probs,stds):
 
     plt.tight_layout()
 
-    fig.savefig(FIG_PATH + "2Bc_prob.pdf")
+    fig.savefig(FIG_PATH + path)

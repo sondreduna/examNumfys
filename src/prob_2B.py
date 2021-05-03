@@ -36,7 +36,8 @@ def sweep(v_0,tN,dt,beta,tau,batch = 500):
     for i in nb.prange(batch):
         T, v = stochSIR(v_0,tN,dt,beta,tau)
 
-        if np.max(v[:,1]) < 2 * v_0[1] and slope(T,v[:,1]) <= 0:
+        #if np.max(v[:,1]) <= 2 * v_0[1] and slope(T,v[:,1]) <= 0:
+        if slope(T,v[:,1]) <= 0:
             X[i] = 0.
         else:
             X[i] = 1.
@@ -59,7 +60,7 @@ def outbreak_probability():
     P    = np.zeros(np.shape(Is))
     stds = np.zeros(np.shape(Is))
     
-    for i,I in tqdm(enumerate(Is)):
+    for i,I in enumerate(tqdm(Is)):
         v_0  = np.array([N - I,I,0])
         X    = sweep(v_0,tN,dt,beta,tau)
         p    = np.mean(X)
@@ -76,7 +77,7 @@ def outbreak_probability():
 if __name__ == "__main__":
 
     # prob a
-    """
+    
     N    = 100000
     I    = 10
     
@@ -107,9 +108,9 @@ if __name__ == "__main__":
     # prob b
 
     plot_infected_stoch(T,v,Ts,V)
-    """
+    
     # prob c
 
     p,s = outbreak_probability()
     
-    plot_probabilities(p,s)
+    plot_probabilities(p,s,x = np.arange(1,11), path = "2Bc_prob.pdf" )

@@ -68,7 +68,7 @@ def find_max_beta(beta_0,tol = 1e-6,maxiter = 50):
     return beta, err
         
 
-def vaccination_test(R_0,phi = 0.8):
+def vaccination_test(R_0):
     """
     Increasing the ratio of vaccinated people until the 
     log-slope of the infected is sufficiently far from that of the
@@ -81,7 +81,7 @@ def vaccination_test(R_0,phi = 0.8):
 
     v_0 = np.array([S,I,R])
     
-    TN  = 180
+    TN  = 50
     dt  = 0.05
     
     sir  = SIRSolver(0,v_0,TN,dt,0.25,10)
@@ -94,8 +94,8 @@ def vaccination_test(R_0,phi = 0.8):
     
     slope     = log_slope(T[1:100],v[1:100,1]) 
     
-    while slope > phi * slope_ref:
-        R = R * 2 ** ( 1 - phi * slope_ref/slope)
+    while slope > 0:
+        R = R * 2 ** ( slope)
         S = 1 - I - R
         v_0 = np.array([S,I,R])
         
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     
     ## prob d
 
-    Rmin, slopemin = vaccination_test(0.01,phi = 0.3)
+    Rmin, slopemin = vaccination_test(0.1)
     np.savetxt(DATA_PATH + "Rmin.txt", np.array([Rmin,slopemin]))
 
     

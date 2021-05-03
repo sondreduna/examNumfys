@@ -50,10 +50,12 @@ def R_inf(beta,tau):
 def Iexp(T,I_0,beta,tau):
     return I_0 * np.exp(T/tau * (beta*tau - 1))
 
+# needs to be compiled with numba to use in the sweep-method
 @nb.njit()
 def slope(x,y):
     return ((x*y).mean() - x.mean()*y.mean()) / ((x**2).mean() - (x.mean())**2)
 
+@nb.njit()
 def log_slope(x,y):
     x = x
     y = np.log(y)

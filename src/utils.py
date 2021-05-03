@@ -59,7 +59,13 @@ def slope(x,y):
 def log_slope(x,y):
     x = x
     y = np.log(y)
-    return slope(x,y)
+
+    # Ignore the values at which y is nan, i.e. occuring when
+    # we take np.log(0), which happens quite often (!)
+    
+    mask = np.isfinite(y)
+    
+    return slope(x[mask],y[mask])
 
 def add_slope_marker(ax,slope,pos):
     slope_marker(pos,(round(slope,3),1),ax = ax)

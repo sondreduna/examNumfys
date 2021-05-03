@@ -37,7 +37,7 @@ def sweep(v_0,tN,dt,beta,tau,batch = 500):
         T, v = stochSIR(v_0,tN,dt,beta,tau)
 
         #if np.max(v[:,1]) <= 2 * v_0[1] and slope(T,v[:,1]) <= 0:
-        if slope(T,v[:,1]) <= 0:
+        if log_slope(T,v[:,1]) <= 0:
             X[i] = 0.
         else:
             X[i] = 1.

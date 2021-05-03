@@ -18,7 +18,7 @@ def SEIIaRstep(V,N,dt,rs):
     Piar = 1 - np.exp(-dt/tau_I)
 
     Dse          = np.random.binomial(V[0],Pse)
-    Dei,Deia,Dee = np.random.multinomial(int(V[1]), (Pei,Peia,1-Pei-Peia) )
+    Dei,Deia,Dee = np.random.multinomial(V[1], (Pei,Peia,1-Pei-Peia) )
     Dir          = np.random.binomial(V[2], Pir)
     Diar         = np.random.binomial(V[3], Piar)
 
@@ -34,7 +34,7 @@ def SEIIaR(v_0,tN,dt,rs):
 
     T = np.arange(0,tN+dt,dt)
     n = len(T)
-    V = np.zeros((n,5))
+    V = np.zeros((n,5), dtype = np.int64)
     V[0,:] = v_0
     for i in range(1,n):
         V[i] = SEIIaRstep(V[i-1],N,dt,rs)
@@ -52,7 +52,7 @@ def sweep_SEIIaR(v_0,tN,dt,rs,batch = 500):
         # use only the initial stage of the simulation to calculate
         # the slope, to avoid nans due to the logarithms
         
-        if slope(T[:],np.sum(v[:,1:3], axis = 1 )) <= 0:
+        if log_slope(T[:],np.sum(v[:,1:4], axis = 1 )) <= 0:
             X[i] = 0.
         else:
             X[i] = 1.

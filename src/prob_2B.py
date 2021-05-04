@@ -51,7 +51,7 @@ def outbreak_probability():
 
     N    = 100000
     
-    tN   = 50  
+    tN   = 30  
     dt   = 0.005
     beta = 0.25
     tau  = 10

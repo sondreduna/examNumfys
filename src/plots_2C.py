@@ -25,7 +25,7 @@ def plot_sir_comp(T,v,Ts,V):
     fig.savefig(FIG_PATH + "2Ca_comp.pdf")
 
 
-def add_seiiar(ax,Ts,vs,index,N):
+def add_seiiar(ax,Ts,vs):
 
     Ss,Es,Is,Ias,Rs = vs.T
     ax.plot(Ts,Ss, ls = "--",color ="blue")
@@ -51,7 +51,7 @@ def plot_seiiar(Ts,V):
     ax.plot(Ts,Rs, ls = "--",label=r"$R$",color ="green")
     
     for i in range(1,N):
-        add_seiiar(ax,Ts,V[i],i,N)
+        add_seiiar(ax,Ts,V[i])
     
     ax.grid(ls ="--")
     
@@ -63,8 +63,12 @@ def plot_seiiar(Ts,V):
     fig.savefig(FIG_PATH + "2Ca_SEIIaR.pdf")
 
     
-def plot_probabilities_rs(probs,stds, x, path):
+def plot_probabilities_rs(path):
 
+    probs = np.load(DATA_PATH + "2Cb_P.npy")
+    stds  = np.load(DATA_PATH + "2Cb_std.npy")
+    x     = np.load(DATA_PATH + "2Cb_Rs.npy")
+    
     fig,ax =  plt.subplots()
     plt.plot(x,probs,
              label = r"$P(\mathrm{outbreak} | r_s)$",
@@ -74,7 +78,23 @@ def plot_probabilities_rs(probs,stds, x, path):
     ax.errorbar(x,y = probs, yerr = stds, xerr = 0 ,
                 color="black",
                 ls = "",
-                label = "Normalised standard deviation")
+                label = "Standard deviation")
+
+    # add same results but with r_a = 1
+    
+    probs = np.load(DATA_PATH + "2Cb_P_a.npy")
+    stds  = np.load(DATA_PATH + "2Cb_std_a.npy")
+    x     = np.load(DATA_PATH + "2Cb_Rs_a.npy")
+
+    plt.plot(x,probs,
+             label = r"$P(\mathrm{outbreak} | r_s)$, $r_a = 1$",
+             ls = "--",
+             marker = ".",
+             color = "r")
+    ax.errorbar(x,y = probs, yerr = stds, xerr = 0 ,
+                color="black",
+                ls = "",
+                label = "Standard deviation")
 
     plt.xlabel(r"Infectiousness when symptomatic, $r_s$")
     plt.ylabel(r"Probability")

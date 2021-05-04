@@ -1,4 +1,5 @@
 from prob_2C import *
+from plots_2D import *
 
 beta  = 0.55
 ra    = 0.1
@@ -82,6 +83,24 @@ def SEIIaR_commuter(M,X_0,tN,dt):
 
     return T, X
         
-        
+if __name__ == "__main__":
+
+    # prob a 
     
+    E = 25
+
+    M = np.array([[9000,1000],[200,99800]])
+    X_0 = np.tensordot(M,np.array([1,0,0,0,0]),axes = 0)
+    X_0[0,0] = np.array([9000-E,E,0,0,0])
+
+    tN = 180
+    dt = 0.002
+    
+    T, X = SEIIaR_commuter(M,X_0,tN,dt)
+
+    np.save(DATA_PATH + "2Da_X.npy", X)
+    np.save(DATA_PATH + "2Da_T.npy", T)
+
+    plot_cities(T,X,path = "2Da_commuter.pdf" )
+
     

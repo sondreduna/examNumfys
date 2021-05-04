@@ -28,7 +28,7 @@ class SIRSolver(ODESolver):
         tau  = tau_
 
 
-def find_max_beta(beta_0,tol = 1e-6,maxiter = 50):
+def find_max_beta(beta_0,tol = 1e-6):
     """
     Simple approach to finding the largest beta for which 
     I is smaller than 0.2.
@@ -92,7 +92,7 @@ def vaccination_test(R_0):
     # avoid using t = 0 as it is problematic when
     # computing the log. Also v[0] = 0 occasionally.
     
-    slope     = log_slope(T[1:100],v[1:100,1]) 
+    slope     = log_slope(T[1:300],v[1:300,1]) 
     
     while slope > 0:
         R = R * 2 ** ( slope)
@@ -102,7 +102,7 @@ def vaccination_test(R_0):
         sir  = SIRSolver(0,v_0,TN,dt,beta,10)
         T,v  = sir()
         
-        slope     = log_slope(T[1:100],v[1:100,1])
+        slope     = log_slope(T[1:300],v[1:300,1])
 
     return R, slope
     
@@ -116,7 +116,7 @@ if __name__ == "__main__":
 
     v_0 = np.array([S,I,R])
     TN  = 180
-    dt  = 0.05
+    dt  = 0.001
 
     sir = SIRSolver(0,v_0,TN,dt,0.25,10)
     T,v = sir()

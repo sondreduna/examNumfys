@@ -65,7 +65,7 @@ def self_isolation(num_vals = 100):
     E = 25
 
     v_0 = np.array([N-E,E,0,0,0]) 
-    tN  = 20
+    tN  = 30
     dt  = 0.005
 
     V  = np.zeros((10,int(tN/dt)+1,5))
@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     V  = np.zeros((10,int(tN/dt)+1,5))
     Ts = np.arange(0,tN+dt,dt)
-    for i in range(10):
+    for i in tqdm(range(10)):
         T,v = SEIIaR(v_0,tN,dt,rs);
         V[i] = v
 
@@ -128,6 +128,9 @@ if __name__ == "__main__":
 
     # prob b
 
-    p,s,r = self_isolation()
-
-    plot_probabilities_rs(p,s,x = r,path = "2Cb_probs.pdf")
+    self_isolation()
+    # run self_isolation() with r_a = 1
+    # and add a _a to all the filenames to make
+    # the second array used in the plot below
+    
+    plot_probabilities_rs(path = "2Cb_probs.pdf")

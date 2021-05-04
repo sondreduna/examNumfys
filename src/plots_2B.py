@@ -1,14 +1,19 @@
 from utils import *
 
-def add_sol(ax,Ts,vs,index,N):
+def add_sol(ax,Ts,vs,index,N,label = ""):
     cm_S = mpl.cm.get_cmap('winter')
     cm_I = mpl.cm.get_cmap('autumn')
     cm_R = mpl.cm.get_cmap('summer')
     Ss,Is,Rs = vs.T
 
-    ax.plot(Ts,Ss, color = cm_S(index/N), ls = "--")
-    ax.plot(Ts,Is, color = cm_I(index/N), ls = "--")
-    ax.plot(Ts,Rs, color = cm_R(index/N), ls = "--")
+    if label == "":
+        ax.plot(Ts,Ss, color = cm_S(index/N), ls = "--")
+        ax.plot(Ts,Is, color = cm_I(index/N), ls = "--")
+        ax.plot(Ts,Rs, color = cm_R(index/N), ls = "--")
+    else:
+        ax.plot(Ts,Ss, color = cm_S(index/N), ls = "--",label = label[0])
+        ax.plot(Ts,Is, color = cm_I(index/N), ls = "--",label = label[1])
+        ax.plot(Ts,Rs, color = cm_R(index/N), ls = "--",label = label[2])
 
 def plot_sir_stoch(T,v,Ts,V):
     S,I,R = v[:,:].T
@@ -75,7 +80,7 @@ def plot_probabilities(probs,stds, x, path):
     ax.errorbar(x,y = probs, yerr = stds, xerr = 0 ,
                 color="black",
                 ls = "",
-                label = "Normalised standard deviation")
+                label = "Standard deviation")
 
     plt.xlabel(r"Initial number of infected people, $I$")
     plt.ylabel(r"Probability")

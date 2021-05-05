@@ -10,6 +10,25 @@ tau  = 10
 
 # @nb.njit()
 def sir_rhs(t,v):
+    """
+    RHS function defining the SIR differential equations, i.e. f(t,v):
+    
+                dv
+                -- = f(t,v)
+                dt 
+    Parameters
+    ----------
+    t : float
+        Current time. 
+    v : array
+        Current state of system. 
+
+    Returns
+    -------
+    v(t + dt) : array
+        Next state of system.
+    
+    """
     return np.array([- beta * v[0] * v[1],
                      beta * v[0] *v[1] - v[1]/tau,
                      v[1]/tau
@@ -20,6 +39,9 @@ class SIRSolver(ODESolver):
     """
     Simple class for solving the sir equations, built on the same
     principles as that of solving the LLG equation in exercise 2.
+    It does exactly the same as an ODESolver, except that it initialises 
+    beta and tau as global variables, so that they can be changed later,
+    and so that we are not required to pass them as kwargs into f.
 
     """
     
@@ -37,6 +59,20 @@ def find_max_beta(beta_0,tol = 1e-6):
     """
     Simple approach to finding the largest beta for which 
     I is smaller than 0.2.
+
+    Parameters
+    ----------
+    beta_0 : float
+        Initial value of beta to try. 
+    tol : float
+        Tolerance for accepting the answer, i.e. the allowed devation Imax can have.
+
+    Returns
+    -------
+    beta : float
+        The beta solving the problem.
+    err : float
+        The deviation between Imax and 0.2 for this particular beta.  
 
     """
 
@@ -75,9 +111,24 @@ def find_max_beta(beta_0,tol = 1e-6):
 
 def vaccination_test(R_0):
     """
+    Function for finding the initial fraction of vaccinated people that prevents
+    the outbreak from growing exponentially.
+
     Increasing the ratio of vaccinated people until the 
     log-slope of the infected is sufficiently far from that of the
-    exponential growth in the early stage approximation 
+    exponential growth in the early stage approximation.
+
+    Parameters
+    ----------
+    R_0 : float
+        Initial fraction of R to try.
+    
+    Returns
+    -------
+    R : float
+        The found fraction solving the problem.
+    slope : float
+        The slope of the infected-curve in the semi-log plot for this particular R. 
     """
 
     I = 1e-4
@@ -147,6 +198,3 @@ if __name__ == "__main__":
 
     Rmin, slopemin = vaccination_test(0.1)
     np.savetxt(DATA_PATH + "Rmin.txt", np.array([Rmin,slopemin]))
-
-    
-

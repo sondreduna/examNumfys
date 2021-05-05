@@ -10,6 +10,30 @@ tau_I = 7
 
 @nb.njit()
 def SEIIaRstep(V,N,dt,rs):
+    """
+    Function for doing one step of the stochastic SEIIaR model.
+
+    Note that the implementation only directly allows for changing 
+    one parameter of the model, namley rs. This is done to save computation time
+    as only this parameter is changed in the problems.
+
+    Parameters
+    ----------
+    V : array
+        Previous state of system, i.e. [S,E,I,I_a,R].
+    N : int
+        Number of people in population.
+    dt : float
+        Time step.
+    rs : float
+        r_s parameter of the model. 
+
+    Returns
+    -------
+    V(t + dt ) : array
+        Next state of system. 
+
+    """
 
     Pse  = 1 - np.exp(-dt * beta * 1/N *(rs * V[2] + ra * V[3]))
     Pei  = fs * (1 - np.exp(-dt/tau_E))
@@ -33,6 +57,29 @@ def SEIIaRstep(V,N,dt,rs):
     """
 @nb.njit()
 def SEIIaR(v_0,tN,dt,rs):
+    """
+    Function for solving the time evolution of the stochastic SEIIaR model.
+    
+    Parameters
+    ----------
+    v_0 : array
+        Initial state of system
+    tN : float
+        End time, in days.
+    dt : float
+        Time step, in days.
+    rs : float
+        r_s parameter of the model. 
+    
+    Returns
+    -------
+    T : array
+        Time values from 0 to tN spaced by dt.
+    V : array
+        The state of the system for each time in T.  
+    
+    """
+    
     N = np.sum(v_0)
 
     T = np.arange(0,tN+dt,dt)
@@ -46,6 +93,32 @@ def SEIIaR(v_0,tN,dt,rs):
 
 @nb.njit(parallel = True)
 def sweep_SEIIaR(v_0,tN,dt,rs,batch = 500):
+    """
+    Function for simulating a batch of (default) 500 
+    runs of the stochastic SIR model, and classifying 
+    each of the simulations as yielding an exponentially growing 
+    or decreasing outbreak, based on the slope of the number of infected people.
+
+    Parameters
+    ----------
+    v_0 : array
+        Initial state of system
+    tN : float
+        End time, in days.
+    dt : float
+        Time step, in days.
+    rs : float
+        r_s parameter of the model. 
+    batch : int
+        Number of runs to do.
+
+    Returns
+    -------
+    X : array
+        Array of 1s or 0s, corresponding to exponential outbreak or not respectively,
+        for the batch number of runs.
+
+    """
 
     X = np.zeros(batch)
     
@@ -63,6 +136,27 @@ def sweep_SEIIaR(v_0,tN,dt,rs,batch = 500):
     return X
 
 def self_isolation(num_vals = 100):
+    """
+    Function for finding the probabilty of an outbreak 
+    as a function of the self-isolation-rate, rs. 
+    
+    This is described more thoroughly in the report. 
+    
+    Parameters
+    ----------
+    num_vals : int 
+        Number of r_s values to test
+    
+    Returns
+    -------
+    P : array
+        probability of an outbreak for all rs values
+    stds : array
+        The associated standard deviation for each of these estimates.
+    Rs   : array
+        The r_s values considered. 
+
+    """
 
     N = 100000
     E = 25

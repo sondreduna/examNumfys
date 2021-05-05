@@ -34,29 +34,54 @@ plt.rcParams.update(newparams)
 
 
 def S(s,R_0):
+    """
+    Function defining S(\infty) = 0
+    """
     return s - np.exp(- R_0 * (1- s))
 
 def R(r,R_0):
+    """
+    Function defining R(\infty) = 0
+    """
     return r - 1 + np.exp(- R_0 * r )
 
 def S_inf(beta,tau):
+    """
+    Function to find S(\infty)
+    """
     R_0 = beta*tau
     return fsolve(S,.5,args = R_0)[0]
 
 def R_inf(beta,tau):
+    """
+    Function to find R(\infty)
+    """
     R_0 = beta*tau
     return fsolve(R,.5,args = R_0)[0]
 
 def Iexp(T,I_0,beta,tau):
+    """
+    Analytical expression for the early stages of the pandemic,
+    as described in the report and problem sheet. 
+
+    """
     return I_0 * np.exp(T/tau * (beta*tau - 1))
 
 # needs to be compiled with numba to use in the sweep-method
 @nb.njit()
 def slope(x,y):
+    """
+    Calculate the slope of the graph defined by the set (x,y)
+
+    """
     return ((x*y).mean() - x.mean()*y.mean()) / ((x**2).mean() - (x.mean())**2)
 
 @nb.njit()
 def log_slope(x,y):
+    """
+    Calculate the slope of the graph defined by the set (x,y),
+    with logarithmic scales on the y-axis.
+    """
     x = x
     y = np.log(y)
 

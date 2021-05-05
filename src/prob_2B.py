@@ -3,6 +3,28 @@ from plots_2B import *
 
 @nb.njit()
 def stochSIRstep(V,N,dt,beta,tau):
+    """
+    Function for doing one step of the stochastic SIR model.
+
+    Parameters
+    ----------
+    V : array
+        Previous state of system, i.e. [S,I,R].
+    N : int
+        Number of people in population.
+    dt : float
+        Time step.
+    beta : float
+        Beta of model.
+    tau : float 
+        Tau of model. 
+
+    Returns
+    -------
+    V(t + dt ) : array
+        Next state of system. 
+    
+    """
 
     Psi = 1 - np.exp(-dt * beta * V[1]/N)
     Pir = 1 - np.exp(-dt * 1/tau)
@@ -17,6 +39,30 @@ def stochSIRstep(V,N,dt,beta,tau):
 
 @nb.njit()
 def stochSIR(v_0,tN,dt,beta,tau):
+    """
+    Function for solving the time evolution of the stochastic SIR model.
+    
+    Parameters
+    ----------
+    v_0 : array
+        Initial state of system
+    tN : float
+        End time, in days.
+    dt : float
+        Time step, in days.
+    beta : float
+        Beta of model.
+    tau : float 
+        Tau of model.
+    
+    Returns
+    -------
+    T : array
+        Time values from 0 to tN spaced by dt.
+    V : array
+        The state of the system for each time in T.  
+    
+    """
     N = np.sum(v_0)
 
     T = np.arange(0,tN+dt,dt)
@@ -30,7 +76,35 @@ def stochSIR(v_0,tN,dt,beta,tau):
 
 @nb.njit(parallel = True)
 def sweep(v_0,tN,dt,beta,tau,batch = 500):
+    """
+    Function for simulating a batch of (default) 500 
+    runs of the stochastic SIR model, and classifying 
+    each of the simulations as yielding an exponentially growing 
+    or decreasing outbreak, based on the slope of the number of infected people.
 
+    Parameters
+    ----------
+    v_0 : array
+        Initial state of system
+    tN : float
+        End time, in days.
+    dt : float
+        Time step, in days.
+    beta : float
+        Beta of model.
+    tau : float 
+        Tau of model.
+    batch : int
+        Number of runs to do.
+
+    Returns
+    -------
+    X : array
+        Array of 1s or 0s, corresponding to exponential outbreak or not respectively,
+        for the batch number of runs.
+
+    """
+    
     X = np.zeros(batch)
     
     for i in nb.prange(batch):
@@ -46,6 +120,14 @@ def sweep(v_0,tN,dt,beta,tau,batch = 500):
         
 
 def outbreak_probability():
+    """
+    Function for finding the probability of an outbreak 
+    as a function of the number of initially infected people
+    from 1 to 10. 
+    
+    This is described more thoroughly in the report. 
+
+    """
 
     Is = np.arange(1,11,dtype = int)
 
@@ -72,6 +154,7 @@ def outbreak_probability():
 
     np.save(DATA_PATH + "2Bc_P.npy",P)
     np.save(DATA_PATH + "2Bc_std.npy",stds)
+    
     return P, stds
     
 if __name__ == "__main__":

@@ -5,6 +5,11 @@ from prob_2D import *
 from prob_2E import *
 
 def test_timesteps():
+    """
+    Simple test to figure out what timesteps are 
+    feasible for the stochastic model. 
+
+    """
 
     beta = 0.25
     tau  = 10
@@ -60,6 +65,11 @@ def test_timesteps():
     np.save(DATA_PATH + "errs.npy", errs)
 
 def test_timesteps_deterministic():
+    """
+    Simple test for determining which time steps are
+    feasible for the deterministic model.
+
+    """
 
     beta = 0.25
     tau  = 10
@@ -166,7 +176,6 @@ def plot_timestep_deterministic():
     fig.savefig(FIG_PATH + "timestep_det.pdf")
 
 def test_SEIIaR():
-
     """
     Function for testing the SEIIaR model against the 
     usual SIR model. This requires to adjust the parameters in prob_2C 
@@ -179,7 +188,7 @@ def test_SEIIaR():
     
     As it is a bit problematic to compare two stochastic models directly, we
     compare the averages over many runs. Initially I thought of setting the seed
-    before running each model, but that won't give the same results any way since 
+    before running each model, but that won't give the same results anyway since 
     we generate more random numbers in the SEIIaR model.
 
     """
@@ -260,6 +269,11 @@ def plot_sir_comparison(T,v,Ts,V):
     fig.savefig(FIG_PATH + "test_comparison.pdf")
 
 def test_commuter():
+    """
+    Simple function for testing that the commuter model
+    behaves roughly as we expect.  
+
+    """
 
     # check that the infectious people stay in area 1
     # when no-one travels to work in a different area
@@ -300,6 +314,12 @@ def test_commuter():
     plot_cities(T,X, path = "test_commuter_2.pdf")
 
 def test_greedy_commuter():
+    """
+    Function for testing the greedy commuter function one the smaller 
+    population, to see that it work as expected. 
+
+    """
+    
     M = np.genfromtxt(DATA_PATH + "10_city_pop.csv", delimiter=',')
     
     E = 25

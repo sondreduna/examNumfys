@@ -1,4 +1,4 @@
-from prob_2C import *
+from utils import *
 from plots_2D import *
 
 beta  = 0.55
@@ -11,13 +11,41 @@ tau_I = 7
 
 @nb.njit()
 def SEIIaR_commuter_step(X,Pse,Pei,Peia,Pir,Piar):
+    """
+    Function for doing one step of the stochastic SEIIaR commuter model.
+
+    Parameters
+    ----------
+    X : array
+        Previous state of system, i.e. [S,E,I,I_a,R].
+    Pse : float
+        Probability of transitioning from S to E
+    Pei : float
+        Probability of transitioning from E to I
+    Peia : float
+        Probability of transitioning from E to Ia
+    Pir  : float
+        Probability of transitioning from I to R
+    Piar : float
+        Probability of transitioning from Ia to R
+
+    Returns
+    -------
+    X(t + dt ) : array
+        Next state of system. 
+
+    """
 
     Dse          = np.random.binomial(X[0],Pse)
     Dei,Deia,Dee = np.random.multinomial(X[1], (Pei,Peia,1-Pei-Peia) )
     Dir          = np.random.binomial(X[2], Pir)
     Diar         = np.random.binomial(X[3], Piar)
 
-    D = np.array([-Dse,-Dei-Deia+Dse,-Dir+Dei, -Diar+Deia,Dir+Diar])
+    D = np.array([- Dse,
+                  - Dei - Deia + Dse,
+                  - Dir + Dei,
+                  - Diar+ Deia,
+                    Dir + Diar])
     return X + D
     """
     return np.array([X[0] - Dse,
@@ -29,6 +57,28 @@ def SEIIaR_commuter_step(X,Pse,Pei,Peia,Pir,Piar):
     
 @nb.njit()
 def SEIIaR_commuter(M,X_0,tN,dt):
+    """
+    Function for solving the time evolution of the stochastic SEIIaR commuter model.
+    
+    Parameters
+    ----------
+    M : array
+        Population matrix
+    X_0 : array
+        Initial state of system
+    tN : float
+        End time, in days.
+    dt : float
+        Time step, in days.
+    
+    Returns
+    -------
+    T : array
+        Time values from 0 to tN spaced by dt.
+    X : array
+        The state of the system for each time in T.  
+    
+    """
 
     m    = np.shape(M)[0] 
     
@@ -63,7 +113,7 @@ def SEIIaR_commuter(M,X_0,tN,dt):
         
         for j in range(step_length):
 
-            # Daytime simulation
+            # Night simulation
             
             N = np.sum(M,axis = 0)
             I = X[i+j,:,:,2:4]
@@ -77,7 +127,7 @@ def SEIIaR_commuter(M,X_0,tN,dt):
 
         for j in range(step_length):
 
-            # Night simulation 
+            # Day simulation 
             
             N = np.sum(M,axis = 1)
             I = X[i+j,:,:,2:4]

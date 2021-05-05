@@ -9,9 +9,7 @@ $$
 	200 & 99800
 	\end{bmatrix},
 $$
-and simulate the time evolution of each of the five states for $180$ days, as described in \cite{sheet}, with $25$ initially exposed people working and living in town $1$. The results of this simulation is shown in figure \ref{fig:commuter_2city}. Notice that we here use the number of people as scale on the vertical axis, so that we easier can distinguish the two towns from each other. We observe that the evolution of the epidemic in town $2$ is delayed compared to that of town $1$. This is as expected, as only $25$ people in town $1$ are exposed, and they can only infect people in town $2$ \textit{via} someone that works in town $2$ during the night, or someone that works in town $1$ while living in town $2$ during daytime. 
-
-Also here, note that at each time there are fewer asymptomatic infected than symptomatic infected. This is as expected since $f_a < f_s$, and $r_a < r_s$.
+and simulate the time evolution of each of the five states for $180$ days, as described in \cite{sheet}, with $25$ initially exposed people working and living in town $1$. The results of this simulation is shown in figure \ref{fig:commuter_2city}. Notice that we here use the number of people as scale on the vertical axis, so that we easier can distinguish the two towns from each other. We observe that the evolution of the epidemic in town $2$ is delayed compared to that of town $1$. Notice that people start to get exposed in town $2$ roughly around the time at which the number of infected in town $1$ reaches its peak. This is as expected, as only $25$ people in town $1$ are exposed, and they can only infect people in town $2$ \textit{via} someone that works in town $2$ during the night, or someone that works in town $1$ while living in town $2$ during daytime. Also here, note that at each time there are fewer asymptomatic infected than symptomatic infected. This is as expected since $f_a < f_s$, and $r_a < r_s$.
 
 \begin{figure}[htb]
 	\centering

@@ -3,14 +3,43 @@ from plots_2E import *
 
 @nb.njit()
 def SEIIaR_commuter_greedy(M,X_0,tN,dt):
+    """
+    Function for solving the time evolution of the stochastic SEIIaR commuter model.
+    Greedy version:
+        This solver only keeps track of the previous and current state of the system
+        as this is only what is needed to step forward, and it saves a lot of memory usage. 
+    
+        Further, it also calculates N(t) : the number of towns with more than 10 infected
+        people at each time step, as this is what we are after in problem 2Eb and 2Ec. 
+    
+    Parameters
+    ----------
+    M : array
+        Population matrix
+    X_0 : array
+        Initial state of system
+    tN : float
+        End time, in days.
+    dt : float
+        Time step, in days.
+    
+    Returns
+    -------
+    T : array
+        Time values from 0 to tN spaced by dt.
+    infected : array
+        The number of towns with more than 10 infected people at each point in time, N(t).
+    
+    """
 
+    # get number of towns
     m    = np.shape(M)[0] 
     
     # set this to ones initially, but change it 
     # for each step, as it depends on the number of infected.
-
     Pse  = np.ones(m)
 
+    # Calculate the probabilities that do not change with time
     Pei  = fs * (1 - np.exp(-dt/tau_E))
     Peia = fa * (1 - np.exp(-dt/tau_E))
     Pir  = 1 - np.exp(-dt/tau_I)
@@ -46,7 +75,7 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
         
         for j in range(step_length):
 
-            # Daytime simulation
+            # Night simulation
             
             N = np.sum(M,axis = 0)
             I = X_[:,:,2:4]
@@ -56,18 +85,20 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
                 for l in range(m):        
                     X[k,l,:] = SEIIaR_commuter_step(X_[k,l,:],Pse[k],Pei,Peia,Pir,Piar)
 
-            # numba cannot handle multiple axis at once in the sum function,
-            # therefore, I nest the sums rather. 
+            # numba cannot handle multiple axis at once in the np.sum function,
+            # therefore, I nest the sums  
             inf  = np.sum(np.sum(X[:,:,2:4],axis = 1),axis = -1)
             mask = inf > 10
             infected[i+j + 1] = np.sum(mask)
-            
+
+            # set previous step to current when incrementing j + i 
             X_ = X
+            
         i += step_length
 
         for j in range(step_length):
 
-            # Night simulation 
+            # Day simulation 
             
             N = np.sum(M,axis = 1)
             I = X_[:,:,2:4]
@@ -81,12 +112,18 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
             inf  = np.sum(np.sum(X[:,:,2:4],axis = 1),axis = -1)
             mask = inf > 10
             infected[i+j + 1] = np.sum(mask)            
-        
+
+            # set previous step to current when incrementing j + i 
             X_ = X
      
     return T, infected
 
 def generate_pop():
+    """
+    Function for manually generating and saving the population structure 
+    for problem 2Ea.
+
+    """
 
     M = np.zeros((10,10),dtype = np.int64)
 
@@ -104,6 +141,11 @@ def generate_pop():
     np.savetxt(DATA_PATH + "10_city_pop.csv",M, delimiter = ",")
 
 def work_from_home():
+    """
+    Function for manipulating the population structure in problem 2Eb 
+    to be the one asked for in problem 2Ec. 
+
+    """
 
     M = np.genfromtxt(DATA_PATH + "population_structure.csv", delimiter=',')
     M = M.astype("int64")
@@ -118,6 +160,10 @@ def work_from_home():
     np.savetxt(DATA_PATH + "population_structure_ho.csv",M,delimiter=",")
     
 def ten_city_sim():
+    """
+    Simulate the 10 city problem, and plot the results. 
+
+    """
     M = np.genfromtxt(DATA_PATH + "10_city_pop.csv", delimiter=',')
     
     E = 25
@@ -140,18 +186,23 @@ def ten_city_sim():
 
     plot_10_cities(T,XX,path = "2Ea_commuter.pdf" )
 
-@nb.njit(parallel = True)
-def big_sweep(M,X_0,tN,dt):
-
-    infected = np.zeros((10,int(tN/dt)+1))
-    T = np.arange(0,tN + dt, dt)
-    for i in nb.prange(10):
-        _, I = SEIIaR_commuter_greedy(M,X_0,tN,dt)
-        infected[i] = I
-        
-    return T, infected
 
 def big_population_sim(ind, homeoffice = False):
+    """
+    Simulate the big population structure. 
+
+    Parameters
+    ----------
+    ind : int 
+        Index of simulation : used to be able to run the 10 simulations in
+        parallel and save the results to unique files. This index ensures that
+    
+    homeoffice : bool
+        If True : use the population structure for problem 2Ec,
+        otherwise, use the population structure for problem 2Eb.
+
+    """
+    
     if homeoffice:
         M = np.genfromtxt(DATA_PATH + "population_structure_ho.csv", delimiter=',')
     else:
@@ -188,14 +239,15 @@ def big_population_sim(ind, homeoffice = False):
 import sys
 
 if __name__ == "__main__":
+    
+    # prob a
+    # ten_city_sim()
 
     # provide an index to the function call
-    # so that 10 runs can be run simultaneously
+    # so that 10 simulations can be run simultaneously
     
     index = sys.argv[1]
     index = int(index)
-    # prob a
-    ten_city_sim()
     
     # prob b
     # big_population_sim(index)
@@ -204,8 +256,8 @@ if __name__ == "__main__":
     # big_population_sim(index, homeoffice = True)
 
     
-    # after having run this, separately, run
+    # after having run the ten simulations, separately, run
     # plot_infections("2Eb_T.npy","2Eb_inf","2Eb_N.pdf")
     # and
-    plot_infections("2Eb_T_ho.npy","2Eb_inf_ho","2Ec_N.pdf")
+    # plot_infections("2Eb_T_ho.npy","2Eb_inf_ho","2Ec_N.pdf")
 

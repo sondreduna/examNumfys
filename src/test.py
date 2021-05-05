@@ -2,6 +2,7 @@ from prob_2A import *
 from prob_2B import *
 from prob_2C import *
 from prob_2D import *
+from prob_2E import *
 
 def test_SEIIaR():
 
@@ -118,7 +119,23 @@ def test_commuter():
 
     plot_cities(T,X, path = "test_commuter.pdf")
 
+def test_greedy_commuter():
+    M = np.genfromtxt(DATA_PATH + "10_city_pop.csv", delimiter=',')
     
+    E = 25
+    
+    X_0 = np.tensordot(M,np.array([1,0,0,0,0]),axes = 0)
+    X_0[1,1] = np.array([9500-E,E,0,0,0])
+
+    X_0 = X_0.astype("int64")
+
+    tN = 180
+    dt = 0.02
+
+    for i in tqdm(range(10)):
+        T, I = SEIIaR_commuter_greedy(M,X_0,tN,dt)
+
+
 if __name__ == "__main__":
 
     # this only makes sense to test if the parameter values
@@ -143,4 +160,6 @@ if __name__ == "__main__":
 
     test_commuter()
 
-    
+    # test greedy commuter:
+
+    test_greedy_commuter()

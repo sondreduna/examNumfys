@@ -23,7 +23,7 @@ def plot_cities(T,X, path):
     ax[0].plot(T,Ias, ls = "--",label= r"$I_a$",color ="yellow")
     ax[0].plot(T,Rs, ls = "--",label=r"$R$",color ="green")
 
-    # this nice feature is borrowed from:
+    # this neat feature is borrowed from:
     # https://stackoverflow.com/questions/4700614/how-to-put-the-legend-out-of-the-plot
     
     ax[0].legend(loc='upper center', bbox_to_anchor=(0.5, 1.05),

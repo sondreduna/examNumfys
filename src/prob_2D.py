@@ -9,9 +9,6 @@ fa    = 0.4
 tau_E = 3
 tau_I = 7
 
-r     = np.array([rs,ra]) 
-
-
 @nb.njit()
 def SEIIaR_commuter_step(X,Pse,Pei,Peia,Pir,Piar):
 
@@ -28,11 +25,12 @@ def SEIIaR_commuter_step(X,Pse,Pei,Peia,Pir,Piar):
 
 @nb.njit()
 def SEIIaR_commuter(M,X_0,tN,dt):
+
+    m    = np.shape(M)[0] 
     
     # set this to ones initially, but change it 
     # for each step, as it depends on the number of infected.
 
-    m    = np.shape(M)[0] 
     Pse  = np.ones(m)
 
     Pei  = fs * (1 - np.exp(-dt/tau_E))
@@ -60,6 +58,8 @@ def SEIIaR_commuter(M,X_0,tN,dt):
         i = day * 2 * step_length # current start index
         
         for j in range(step_length):
+
+            # Daytime simulation
             
             N = np.sum(M,axis = 0)
             I = X[i+j,:,:,2:4]
@@ -72,6 +72,8 @@ def SEIIaR_commuter(M,X_0,tN,dt):
         i += step_length
 
         for j in range(step_length):
+
+            # Night simulation 
             
             N = np.sum(M,axis = 1)
             I = X[i+j,:,:,2:4]

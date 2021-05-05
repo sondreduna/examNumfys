@@ -18,7 +18,7 @@ The time-development of all the variables in the SEIIaR model is shown in figure
 	\label{fig:SEIIaR_compare}
 \end{figure}
 
-One prominent feature to notice here, is that the process overall seems to be \textit{slower}, in the sense that it takes longer for people to get infected and eventually recover, but the peaks and asymptotic behaviours seem to align quite closely. This is probably due to the fact that this model includes a period in which people are infected but not yet able to infect anybody else, an incubation period of typical length $\tau_E = 3 \, \mathrm{days}$. This will naturally delay the process, but it should not affect the peak nor the asymptotic behaviour. Ultimately, this shows that the SEIIaR model adds another layer of realism to our model in the sense that people do not get sick right away.
+One prominent feature to notice here, is that the process overall seems to be \textit{slower}, in the sense that it takes longer for people to get infected and eventually recover, but the peaks and asymptotic behaviours seem to align quite closely. This is probably due to the fact that this model includes a period in which people are infected but not yet able to infect anybody else, an incubation period of typical length $\tau_E = 3 \, \mathrm{days}$. This will naturally delay the process, but it should not affect the peak nor the asymptotic behaviour. Ultimately, this shows that the SEIIaR model adds another layer of realism to our model in the sense that people do not get sick right away. Another thing to mention is that the fraction of infected asymptomatic people $I_a$ are always less than the fraction of infected symptomatic people $I$. This is as expected since $f_a < f_s$, and the probabilities of transitioning to either of these states are the same.
 
 To test that the implementation is correct --- by comparing with the deterministic and stochastic SIR model --- we adjust the parameters of the SEIIaR to $\beta = 0.25$, $r_s = 1$, $r_a = 1$, $\tau_E = 0$, $\tau_I= 10$ and start with $10$ out of $100 \, 000$ people initially infected. The results of doing $1000$ such simulations and performing the average of the stochastic models is shown in figure \ref{fig:comparison_SIR}. This shows that the two stochastic models are more or less identical, as expected.
 
@@ -31,9 +31,9 @@ To test that the implementation is correct --- by comparing with the determinist
 
 \subsection{b) Probability of outbreak dependence on $r_s$}
 
-The variable $r_s$ describes how infectious a person is when he is in the infection state. Reducing this constant below $1$ can therefore correspond to emulating the degree of self-isolation when people are symptomatic. We investigate the probability of an outbreak as a function of this self-isolation-rate $r_s$ by the following procedure (which is essentially the same as that shown in $2Bb$ expect we are now finding the probability as a function of $r_s$):
+The variable $r_s$ describes how infectious a person is when he is in the infection state. Reducing this constant below $1$ can therefore correspond to emulating the degree of self-isolation when people are symptomatic. We investigate the probability of an outbreak as a function of this self-isolation-rate $r_s$ by the following procedure (which is essentially the same as that shown in $2Bb$ expect we are now finding the probability as a function of $r_s$): 
 
-\begin{algorithm}[htb]
+\begin{algorithm}[H]
 	Choose the parameters of the model as those given in the exam sheet \cite{sheet}, but with $T = 30 \, \mathrm{days}$\footnote{As the typical infection time is still $10$ days, I assume 50 days to be more than sufficient for detecting an outbreak in the stochastic model.}. \;
 	Choose a batch-size $B$.\;
 	Choose a number of values $n$ of $r_s$ to try\;

@@ -2,7 +2,7 @@
 
 \subsection{a)}
 
-The ODE-solver I chose to use is the one I made for exercise $2$, as I am very familiar with this, and found it working reasonably good for these kind of purposes. The implementation is an object-oriented version of the solver methods shown in the lectures and should be easily understood by the documentation in \lstinline|ode.py|.
+The ODE-solver I chose to use is the one I made for exercise $2$, as I am very familiar with this, and found it working reasonably good for these kind of purposes. For this problem I use the RK4-method. The implementation is an object-oriented version of the solver methods shown in the lectures and should be easily understood by the documentation in \lstinline|ode.py|.
 
 I solve the deterministic SIR equations in terms of fractions of people. As seen in figure \ref{fig:SIR} the asymptotic expressions for $S(t)$ and $R(t)$ as given in the exam-sheet \cite{sheet}. The expressions for $S(\infty)$ and $R(\infty)$ are solved using the non-linear equation solver \lstinline|fsolve| from \lstinline|scipy|, with initial guesses $0.5$ for both.
 

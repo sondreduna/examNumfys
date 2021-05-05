@@ -4,7 +4,11 @@ from plots_2A import *
 beta = 0.25
 tau  = 10
 
-@nb.njit()
+# If using nb.njit on this, remember to recompile the function
+# each different run when changing beta or tau, as they are
+# treated as constants if not. 
+
+# @nb.njit()
 def sir_rhs(t,v):
     return np.array([- beta * v[0] * v[1],
                      beta * v[0] *v[1] - v[1]/tau,
@@ -117,7 +121,7 @@ if __name__ == "__main__":
 
     v_0 = np.array([S,I,R])
     TN  = 180
-    dt  = 0.001
+    dt  = 0.005
 
     sir = SIRSolver(0,v_0,TN,dt,0.25,10)
     T,v = sir()

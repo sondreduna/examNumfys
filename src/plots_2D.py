@@ -9,8 +9,8 @@ def plot_cities(T,X, path):
 
     fig, ax = plt.subplots(nrows = 2, figsize = (13,13), sharex = True)
 
-    v1      = np.sum(X[:,:,0,:],axis = 1)
-    v2      = np.sum(X[:,:,1,:],axis = 1)
+    v1      = np.sum(X[:,0,:,:],axis = 1)
+    v2      = np.sum(X[:,1,:,:],axis = 1)
 
     Ss,Es,Is,Ias,Rs = v1.T
 

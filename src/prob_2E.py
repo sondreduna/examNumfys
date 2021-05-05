@@ -195,7 +195,7 @@ if __name__ == "__main__":
     index = sys.argv[1]
     index = int(index)
     # prob a
-    # ten_city_sim()
+    ten_city_sim()
     
     # prob b
     # big_population_sim(index)

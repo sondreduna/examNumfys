@@ -59,6 +59,45 @@ def test_timesteps():
     np.save(DATA_PATH + "dts.npy", dts)
     np.save(DATA_PATH + "errs.npy", errs)
 
+def test_timesteps_deterministic():
+
+    beta = 0.25
+    tau  = 10
+    
+    # --- initial value for deterministic model ---
+    I = 1e-4
+    R = 0
+    S = 1 - I - R
+
+    v_0 = np.array([S,I,R])
+    
+    tN  = 50
+    dts = np.logspace(-3,0.5,10)
+
+    # --- Reference solution at t = 300 ---
+
+    dt_ref = 1e-4
+    
+    sir = SIRSolver(0,v_0,tN,dt_ref,0.25,10)
+    T,v = sir(True)
+    S_ = v[-1,0]
+
+    # ------------------------------------
+
+    errs = np.zeros((2,10))
+
+    for i,dt in enumerate(tqdm(dts)):
+        sir = SIRSolver(0,v_0,tN,dt,0.25,10)
+        tic = time()
+        T,v = sir()
+        toc = time()
+        
+        errs[0,i] = np.abs(v[-1,0] - S_)
+        errs[1,i] = toc - tic 
+
+    np.save(DATA_PATH + "dts_det.npy", dts)
+    np.save(DATA_PATH + "errs_det.npy", errs)
+
 def plot_timestep():
 
     dts = np.load(DATA_PATH + "dts.npy")
@@ -92,7 +131,39 @@ def plot_timestep():
     plt.tight_layout()
 
     fig.savefig(FIG_PATH + "timestep.pdf")
+    
+def plot_timestep_deterministic():
 
+    dts = np.load(DATA_PATH + "dts_det.npy")
+    errs = np.load(DATA_PATH + "errs_det.npy")
+
+    fig, ax = plt.subplots()
+
+    ax.scatter(dts, errs[0,:],
+            marker = "1",
+            color = "blue",
+            label = r"\texttt{error} Deterministic")
+
+    ax.legend()
+
+    ax2 = ax.twinx()
+    ax2.scatter(dts, errs[1,:],
+            marker = "1",
+            color = "red")
+
+    ax.set_ylabel("Global error",color ="blue")
+    
+    ax2.set_xscale("log")
+    ax2.set_yscale("log")
+    ax2.set_ylabel("Runtime [seconds]",color ="red")
+
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+
+    plt.grid(ls = "--")
+    plt.tight_layout()
+
+    fig.savefig(FIG_PATH + "timestep_det.pdf")
 
 def test_SEIIaR():
 
@@ -197,7 +268,7 @@ def test_commuter():
 
     M = np.array([[10000,0],[0,100000]])
     X_0 = np.tensordot(M,np.array([1,0,0,0,0]),axes = 0)
-    X_0[0,0] = np.array([9000-E,E,0,0,0])
+    X_0[0,0] = np.array([10000-E,E,0,0,0])
 
     tN = 180
     dt = 0.002
@@ -208,6 +279,25 @@ def test_commuter():
     np.save(DATA_PATH + "test_commuter_T.npy", T)
 
     plot_cities(T,X, path = "test_commuter.pdf")
+
+    # check that the distributions are roughly in synch
+    # when all of those in town 1 travel to work in town 2
+
+    E = 25
+
+    M = np.array([[1,9999],[0,100000]])
+    X_0 = np.tensordot(M,np.array([1,0,0,0,0]),axes = 0)
+    X_0[0,1] = np.array([9999-E,E,0,0,0])
+
+    tN = 180
+    dt = 0.002
+    
+    T, X = SEIIaR_commuter(M,X_0,tN,dt)
+
+    np.save(DATA_PATH + "test_commuter_X2.npy", X)
+    np.save(DATA_PATH + "test_commuter_T2.npy", T)
+
+    plot_cities(T,X, path = "test_commuter_2.pdf")
 
 def test_greedy_commuter():
     M = np.genfromtxt(DATA_PATH + "10_city_pop.csv", delimiter=',')

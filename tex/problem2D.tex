@@ -9,9 +9,9 @@ $$
 	200 & 99800
 	\end{bmatrix},
 $$
-and simulate the time evolution of each of the five states for $180$ days, as described in \cite{sheet}, with $25$ initially exposed people working and living in town $1$. The results of this simulation is shown in figure \ref{fig:commuter_2city}. Notice that we here use the number of people as scale on the vertical axis, so that we easier can distinguish the two towns from each other. We observe that the evolution of the epidemic in town $2$ is delayed compared to that of town $1$. This is as expected, as only $25$ people in town $1$ are exposed, and they can only infect people in town $2$ \textit{via } someone that works in town $2$. 
+and simulate the time evolution of each of the five states for $180$ days, as described in \cite{sheet}, with $25$ initially exposed people working and living in town $1$. The results of this simulation is shown in figure \ref{fig:commuter_2city}. Notice that we here use the number of people as scale on the vertical axis, so that we easier can distinguish the two towns from each other. We observe that the evolution of the epidemic in town $2$ is delayed compared to that of town $1$. This is as expected, as only $25$ people in town $1$ are exposed, and they can only infect people in town $2$ \textit{via} someone that works in town $2$ during the night, or someone that works in town $1$ while living in town $2$ during daytime. 
 
-Also here, note that at each time there are fewer asymptomatic infected than symptomatic infected. This is as expected since $f_a < f_s$, and the probability of transitioning to either of these states are equal.  
+Also here, note that at each time there are fewer asymptomatic infected than symptomatic infected. This is as expected since $f_a < f_s$, and $r_a < r_s$.
 
 \begin{figure}[htb]
 	\centering
@@ -54,7 +54,7 @@ To implement the Stochastic SEIIaR Commuter model, I choose the following proced
 				P_{S\to E,\beta} = 1 - \exp{\left( - \Delta t \beta_0 \frac{r_s I_{\beta} + r_a I_{a,\beta}}{N}\right)} 
 				$$
 			}
-			Do a normal SEIIaR step for each group of people $\alpha,\beta = 1,\dots,m$, exactly as described in the previous section.\;   
+			Do a normal SEIIaR step for each group of people $\alpha,\beta = 1,\dots,m$, exactly as described in the introduction to update to the present state $X_{(i+j+1)\alpha\beta\gamma}$\;   
 		$i \gets i + S$\;
 		\For{$j = 0,\dots, S - 1$}
 			{
@@ -153,12 +153,27 @@ To check that the system behaves as expected, we simulate the same scenario, onl
 
 The time-evolution of the different variables are shown in figure \ref{fig:test_commuter}, in which it is apparent that the exposed people in the small city never infect those in the large city, as we expect. Furthermore, we see that the epidemic in area $1$ evolves slower in this case --- the peak of the infected is delayed by approximately $25$ days. This is also as expected, since more potential carriers of infection are available when the two towns mix during daytime. The expected behaviour is also observed when the exposed start out in area $2$, but a plot of this is not included, for brevity. 
 
+To do a second test we let $9999$ of the people living in town $1$ work in town $2$, and leave only one working in town $1$\footnote{The reason I leave one worker in town $1$ is that having $0$ people in area $1$ at daytime makes the solver break down, as we divide by $0$ in the expression for $P_{S\to E}$}. That is, we use the population matrix in equation \eqref{eq:test_matrix_2}
+\begin{equation}\label{eq:test_matrix_2}
+	\mathbf{\overline{M}} = \begin{bmatrix}
+		1 & 9999 \\
+		0 & 100000 
+	\end{bmatrix}.
+\end{equation}
+We simulate the same situation, with $25$ of the $9999$ people initially exposed. This should make the evolution of the variables approximately in sync. This is indeed what we observe, in figure \ref{fig:test_commuter_2}, as the number of infected people in each town are closely synced.
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=0.8\columnwidth]{../fig/test_commuter.pdf}
+	\includegraphics[width=0.6\columnwidth]{../fig/test_commuter.pdf}
 	\caption{Solutions of Stochastic SEIIaR commuter model for the $2$-city case, with the matrix $\mathbf{\widetilde{M}}$ in equation \eqref{eq:test_matrix}.}
 	\label{fig:test_commuter}
+\end{figure}
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=0.6\columnwidth]{../fig/test_commuter_2.pdf}
+	\caption{Solutions of Stochastic SEIIaR commuter model for the $2$-city case, with the matrix $\mathbf{\overline{M}}$ in equation \eqref{eq:test_matrix_2}.}
+	\label{fig:test_commuter_2}
 \end{figure}
 
 \clearpage

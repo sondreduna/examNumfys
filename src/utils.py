@@ -2,6 +2,7 @@ import numpy as np
 import numba as nb
 from scipy.optimize import fsolve
 from tqdm import tqdm
+from time import time
 
 DATA_PATH = "../data/"
 FIG_PATH  = "../fig/"
@@ -9,7 +10,6 @@ FIG_PATH  = "../fig/"
 import matplotlib.pyplot as plt
 from matplotlib import rc
 import matplotlib as mpl
-import numpy as np
 
 from scipy.stats import linregress
 from mpltools.annotation import slope_marker

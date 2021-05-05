@@ -11,15 +11,26 @@ As seen in the plot in figure \ref{fig:SIR_stoch}, the $10$ different realisatio
 	\label{fig:SIR_stoch}
 \end{figure}
 
-To choose a suitable time-step for simulating this model, I run the simulation up to $t = 250$ days and find the deviation between the fraction of susceptible and the semi-analytic expression given in the problem sheet \cite{sheet}, and similarly for the fraction of recovered. I include the same run with the deterministic model to see how the deviations relate to each other. This is shown in figure \ref{fig:timesteps}. Clearly, using this comparison is \textit{not} a good way of determining the time step we want to use for the deterministic model, as the solution approaches the asymptotic values for all of the step lengths. However, we see from this plot that if we choose a step length $\lesssim 0.01$, the deviations of the stochastic solutions start to flatten out, and are roughly of the same order as those of the deterministic model. I therefore always use a time step smaller than $0.01$ for simulating the stochastic models. In particular, I use $\Delta t = 0.005$ in problem B,C,D and Ea. For Eb I use $\Delta t = 0.01$ because the runtime become uncomfortably large when using smaller time steps.
+To choose a suitable time-step for simulating this model, I run the simulation up to $t = 250$ days and find the deviation between the fraction of susceptible and the semi-analytic expression given in the problem sheet \cite{sheet}, and similarly for the fraction of recovered. I compute this using the average of $100$ runs of the stochastic model. I include the same run with the deterministic model to see how the deviations relate to each other. This is shown in figure \ref{fig:timesteps}. Clearly, using this comparison is \textit{not} a good way of determining the time step we want to use for the deterministic model, as the solution approaches the asymptotic values for all of the chosen step lengths. However, we see from this plot that if we choose a step length $\lesssim 0.01$, the deviations of the stochastic solutions start to flatten out, and are roughly of the same order as those of the deterministic model. I therefore always use a time step smaller than $0.01$ for simulating the stochastic models. In particular, I use $\Delta t = 0.005$ in problem B,C,D and Ea. For Eb I use $\Delta t = 0.01$ because the runtime become uncomfortably large when using smaller time steps.
+
+For determining the step length to use for the deterministic model I create a reference solution using a relatively small time step, $\Delta t = 10^{-4}$, and then use the deviations between this and each run at the endpoint as a measure of the absolute error. After having done that, it is mostly a matter of preference how small a step length one wants to use. If I can accept an error of $10^{-8}$ in the fraction of susceptible after $50$ days --- corresponding to $1/1000$ of an individual --- I see from the plot in figure \ref{fig:timesteps_det} that I will have to use $\Delta t \lesssim 10^{-1}$. Since the runtimes of the simulation for $\Delta t < 10^{-2}$ for $50$ days are always less than $1$ second, I find that $\Delta t = 0.005$ is probably more than sufficient, and appropriate considering both runtime and accuracy.    
 
 \begin{figure}[htb]
+\centering
+\begin{minipage}[c]{0.49\columnwidth}
 	\centering
-	\includegraphics[width=0.8\columnwidth]{../fig/timestep.pdf}
-	\caption{Deviations between the semi-analytical expressions for the asymptotic value.}
+	\includegraphics[width=\columnwidth]{../fig/timestep.pdf}
+	\captionof{figure}{Global error for stochastic model, compared with $S(\infty)$ and $R(\infty)$.}
 	\label{fig:timesteps}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.49\columnwidth}
+	\centering
+	\includegraphics[width=\columnwidth]{../fig/timestep_det.pdf}
+	\captionof{figure}{Global error the deterministic model.}
+	\label{fig:timesteps_det}
+\end{minipage}
 \end{figure}
-
 \subsection{b)}
 
 As in the previous exercise, we plot the fraction of infected people together with the analytical model for the early stages. This is shown in figure \ref{fig:Infected_stoch}. Here we clearly see that all the realisations are approximately linear in the semi-log plot in the first $40$ days, or so, of the simulation as we observed in the previous exercise. 
@@ -33,9 +44,9 @@ As in the previous exercise, we plot the fraction of infected people together wi
 
 \subsection{c) Probability of an outbreak}
 
-There will always be a certain probability for an outbreak disappearing by itself for the stochastic model. In the present subsection we estimate this probability for an initial number of infected people $=1,2,\dots,10$. This is done by the procedure described in algorithm \ref{alg:prob_I}.
+There will always be a certain probability for an outbreak disappearing by itself using the stochastic model. In the present subsection we estimate this probability for an initial number of infected people $=1,2,\dots,10$. This is done by the procedure described in algorithm \ref{alg:prob_I}. In this procedure, I use the slope of the number of infected people $I(t)$ during the first $30$ days as an indicator of whether the outbreak disappears by itself or not. If the slope is positive, I count it as an outbreak, and if not, I count it as disappearing.
 
-\begin{algorithm}[htb]
+\begin{algorithm}[H]
 	Choose the parameters of the model as those given in the exam sheet \cite{sheet}, but with $T = 30 \, \mathrm{days}$\footnote{As the typical infection time is $10$ days, I assume 50 days to be sufficient for detecting an outbreak in the stochastic model.}. \;
 	Choose a batch-size $B$.\;
 	\For{$I = 1,2,\dots, 10$}{
@@ -61,13 +72,13 @@ There will always be a certain probability for an outbreak disappearing by itsel
 	\label{alg:prob_I}
 \end{algorithm} 
 
-In performing this procedure, I use a batch size of $500$ in each sweep. What we are estimating here is essentially a Bernoulli-distributed random variable, $X$: $X$ can take the realisations $1$ or $0$ with probabilities $p$ and $1-p$ respectively, and we assume them to be independent \cite[~p.26]{Wassermann}. Then, as the variance of such a distribution is $p(1-p)$, the variance of the estimator for the probability, namely $\hat{p}$\footnote{That is, the mean value of $X_n$.} is 
+In performing this procedure, I use a batch size of $500$ in each sweep. What we are estimating here is essentially a Bernoulli-distributed random variable, $X$: $X$ can take the realisations $1$ or $0$ with probabilities $p$ and $1-p$ respectively, and we assume them to be independent \cite[~p.26]{Wassermann}. Then, as the variance of such a distribution is $p(1-p)$, the variance of the estimator for the probability, namely $\hat{p}$\footnote{That is, the mean value of $X_n$.}, is 
 $$
 	\mathrm{Var}(\hat{p}) =  \sum_{n= 1}^{B} \mathrm{Var}\left(\frac{X_n}{B}\right) = \frac{1}{B^2} \sum_{n= 1}^{B} \mathrm{Var}(X_n) = \frac{1}{B^2} \sum_{n= 1}^{B} p (1-p) = \frac{p(1-p)}{B},
 $$
 from which formula \eqref{eq:std} follows. 
 
-The probability of an outbreak as a function of the initial number of infected people are shown in figure \ref{fig:prob_outbreak} together with the associated standard deviation. As seen from this plot, when there are more than $6$ people initially infected, the probability is approximately $1$ that an outbreak will happen. However, for e.g. $1$ initially infected person, the probability is less than $0.6$. This ultimately shows that the stochastic model has a more realistic feature to it than the deterministic one, in that these scenarios might occur.
+The probability of an outbreak as a function of the initial number of infected people are shown in figure \ref{fig:prob_outbreak} together with the associated standard deviation. As seen from this plot, when there are more than $6$ people initially infected, the probability is approximately $1$ that an outbreak will happen. However, for e.g. $1$ initially infected person, the probability is around $0.65$. This ultimately shows that the stochastic model has a more realistic feature to it than the deterministic one, in that these scenarios might occur.
 % The probabilities are also shown in table \ref{tab: probabilities}
 
 \begin{figure}[htb]

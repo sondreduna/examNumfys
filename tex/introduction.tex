@@ -10,7 +10,7 @@ The SIR model reads
 \end{align}
 \end{subequations}
 where $\beta$ is the rate at which susceptible people encounter infected people, and become infected, and $\tau$ is the typical duration of the infection. To solve this equation numerically, we recast it as a system of ODE's by defining the vector $\mathbf{v} = [S,I,R]^T$, such that the equations in \ref{eq:SIR} simplify to
-\begin{equation}
+\begin{equation}\label{eq:sir_vect}
 	\der{\mathbf{v}(t)}{t} = \frac{\mathrm{d}}{\mathrm{d}t} \begin{bmatrix}
 		S(t) \\
 		I(t) \\

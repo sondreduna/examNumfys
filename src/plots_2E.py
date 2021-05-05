@@ -9,8 +9,8 @@ def plot_10_cities(T,X,path):
 
     fig, ax = plt.subplots(nrows = 5,ncols = 2, figsize = (18,23), sharex = True)
 
-    v1      = np.sum(X[:,:,:,0,:],axis = 2)
-    v2      = np.sum(X[:,:,:,1,:],axis = 2)
+    v1      = np.sum(X[:,:,0,:,:],axis = 2)
+    v2      = np.sum(X[:,:,1,:,:],axis = 2)
 
     Ss,Es,Is,Ias,Rs = v1[0].T
 
@@ -50,7 +50,7 @@ def plot_10_cities(T,X,path):
     
     for i in range(1,5):
         for j in range(2):
-            V = np.sum(X[:,:,:,i*2 + j,:],axis = 2)
+            V = np.sum(X[:,:,i*2 + j,:,:],axis = 2)
             for k in range(10):
                 add_seiiar(ax[i,j],T,V[k])
             ax[i,j].set_title(r"\textbf{Town %i}"%(i*2+j + 1))

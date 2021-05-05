@@ -2,7 +2,7 @@ from utils import *
 from plots_2B import *
 
 @nb.njit()
-def SDEstep(V,N,dt,beta,tau):
+def stochSIRstep(V,N,dt,beta,tau):
 
     Psi = 1 - np.exp(-dt * beta * V[1]/N)
     Pir = 1 - np.exp(-dt * 1/tau)
@@ -24,7 +24,7 @@ def stochSIR(v_0,tN,dt,beta,tau):
     V = np.zeros((n,3))
     V[0,:] = v_0
     for i in range(1,n):
-        V[i] = SDEstep(V[i-1],N,dt,beta,tau)
+        V[i] = stochSIRstep(V[i-1],N,dt,beta,tau)
 
     return T,V
 

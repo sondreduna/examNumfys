@@ -15,13 +15,25 @@ Figure \ref{fig:commuter_10city} clearly shows that the epidemic evolves fastest
 
 \subsection{b) $356$ city simulation}
 
-In this problem we use the full population structure as handed out along with the problem set. We are here only interested in the number of municipalities with more than $10$ infected people as a function of time ($\coloneqq \mathcal{N}(t)$), so we modify the commuter solver shown in listing \ref{lst:commuter} to only keep the current and previous state of the system at each time step, and calculate $\mathcal{N}$ for each time step. This is done to avoid using too much memory, which becomes a real problem if we try to allocate space for some thousand matrices of size $365 \times 365 \times 5$. 
+In this problem we use the full population structure as handed out along with the problem set. We are here only interested in the number of municipalities with more than $10$ infected people as a function of time ($\eqqcolon \mathcal{N}(t)$), so we modify the commuter solver shown in listing \ref{lst:commuter} to only keep the current and previous state of the system at each time step, and to calculate $\mathcal{N}$ for each time step. This is done to avoid using too much memory, which becomes a real problem if we try to allocate space for some thousand matrices of size $365 \times 365 \times 5$. Although simulations of this system with a small time step tends to take very long time, making the solver more "greedy" at least opens the door to running the $10$ simulations in parallel. 
 
 $\mathcal{N}(t)$ for 10 realisations of this simulation is shown in figure \ref{fig:infected_Eb}.  
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=0.9\columnwidth]{../fig/2Eb_N_back.pdf}
+	\includegraphics[width=0.9\columnwidth]{../fig/2Eb_N.pdf}
 	\caption{Number of municipalities with more than $10$ infected people a a function of time.}
 	\label{fig:infected_Eb}
+\end{figure}
+
+\subsection{c) Reduced number of commuters in $356$ city simulation}
+
+To emulate the effect of making more people work from home, we change the population matrix by dividing the off-diagonal elements by $10$, and adding the remaining number of people to the diagonal. We run the same simulation as above, and display the number municipalities with more than $10$ infected people as a function of time, $\mathcal{N}(t)$,  in figure \ref{fig:infected_Ec}. Clearly, the effect of reduced travelling is to flatten this curve. In figure \ref{fig:infected_Ec} we see that $\mathcal{N}$ saturates after about $100$ days, while in this case it never even reaches the case where $\mathcal{N}$ is $356$. The increase in $\mathcal{N}(t)$ is seen to be much slower in this case, and the peak of the curve occurs after roughly $150$ days. 
+
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{../fig/2Ec_N.pdf}
+	\caption{Number of municipalities with more than $10$ infected people a a function of time, with reduced travelling.}
+	\label{fig:infected_Ec}
 \end{figure}

@@ -22,12 +22,15 @@ def SEIIaRstep(V,N,dt,rs):
     Dir          = np.random.binomial(V[2], Pir)
     Diar         = np.random.binomial(V[3], Piar)
 
+    D = np.array([-Dse,-Dei-Deia+Dse,-Dir+Dei, -Diar+Deia,Dir+Diar])
+    return V + D
+    """
     return np.array([V[0] - Dse,
                      V[1] - Dei - Deia + Dse,
                      V[2] - Dir + Dei,
                      V[3] - Diar + Deia,
                      V[4] + Dir + Diar])
-
+    """
 @nb.njit()
 def SEIIaR(v_0,tN,dt,rs):
     N = np.sum(v_0)

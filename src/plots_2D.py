@@ -34,7 +34,7 @@ def plot_cities(T,X, path):
     ax[0].grid(ls ="--")
     ax[0].set_ylabel(r"Number of people")
     ax[1].grid(ls ="--")
-    ax[1].set_xlabel(r"$T [\mathrm{days}]$")
+    ax[1].set_xlabel(r"$t [\mathrm{days}]$")
     ax[1].set_ylabel(r"Number of people")
 
     plt.tight_layout()

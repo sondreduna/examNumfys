@@ -59,8 +59,8 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
             # numba cannot handle multiple axis at once in the sum function,
             # therefore, I nest the sums rather. 
             inf  = np.sum(np.sum(X[:,:,2:4],axis = 1),axis = -1)
-            mask = inf >= 10
-            infected[i+j] = np.sum(mask)
+            mask = inf > 10
+            infected[i+j + 1] = np.sum(mask)
             
             X_ = X
         i += step_length
@@ -79,8 +79,8 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
                     X[l,k,:] = SEIIaR_commuter_step(X_[l,k,:],Pse[k],Pei,Peia,Pir,Piar)
 
             inf  = np.sum(np.sum(X[:,:,2:4],axis = 1),axis = -1)
-            mask = inf >= 10
-            infected[i+j] = np.sum(mask)            
+            mask = inf > 10
+            infected[i+j + 1] = np.sum(mask)            
         
             X_ = X
      
@@ -127,7 +127,7 @@ def ten_city_sim():
     X_0[1,1] = np.array([9500-E,E,0,0,0])
 
     tN = 180
-    dt = 0.002
+    dt = 0.005
 
     XX = np.zeros((10,int(tN/dt)+1,10,10,5))
 
@@ -156,11 +156,11 @@ def big_population_sim(ind, homeoffice = False):
         M = np.genfromtxt(DATA_PATH + "population_structure_ho.csv", delimiter=',')
     else:
         M = np.genfromtxt(DATA_PATH + "population_structure.csv", delimiter=',')
-        
+    
     E = 50
     
     X_0 = np.tensordot(M,np.array([1,0,0,0,0]),axes = 0)
-    N_0 = 306708
+    N_0 = M[0,0]
     X_0[0,0] = np.array([N_0-E,E,0,0,0])
 
     # To draw numbers from the discrete distributions, the array values
@@ -178,7 +178,7 @@ def big_population_sim(ind, homeoffice = False):
     T, I = SEIIaR_commuter_greedy(M,X_0,tN,dt)
 
     if homeoffice:
-        np.save(DATA_PATH + f"2Eb_inf_ho{ind}.npy", I)
+        np.save(DATA_PATH + f"2Eb_inf_ho_{ind}.npy", I)
         np.save(DATA_PATH + "2Eb_T_ho.npy", T)
     else:
         np.save(DATA_PATH + f"2Eb_inf_{ind}.npy", I)
@@ -198,12 +198,14 @@ if __name__ == "__main__":
     # ten_city_sim()
     
     # prob b
-    big_population_sim(index)
+    # big_population_sim(index)
 
     # prob c
-    #big_population_sim(index, homeoffice = True)
+    # big_population_sim(index, homeoffice = True)
 
     
     # after having run this, separately, run
-    # plot_infections(T,"2Eb_inf","2Eb_inf.pdf")
+    # plot_infections("2Eb_T.npy","2Eb_inf","2Eb_N.pdf")
+    # and
+    plot_infections("2Eb_T_ho.npy","2Eb_inf_ho","2Ec_N.pdf")
 

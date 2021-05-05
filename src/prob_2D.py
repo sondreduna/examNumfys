@@ -17,12 +17,16 @@ def SEIIaR_commuter_step(X,Pse,Pei,Peia,Pir,Piar):
     Dir          = np.random.binomial(X[2], Pir)
     Diar         = np.random.binomial(X[3], Piar)
 
+    D = np.array([-Dse,-Dei-Deia+Dse,-Dir+Dei, -Diar+Deia,Dir+Diar])
+    return X + D
+    """
     return np.array([X[0] - Dse,
                      X[1] - Dei - Deia + Dse,
                      X[2] - Dir + Dei,
                      X[3] - Diar + Deia,
                      X[4] + Dir + Diar])
-
+    """
+    
 @nb.njit()
 def SEIIaR_commuter(M,X_0,tN,dt):
 
@@ -96,7 +100,7 @@ if __name__ == "__main__":
     X_0[0,0] = np.array([9000-E,E,0,0,0])
 
     tN = 180
-    dt = 0.002
+    dt = 0.005
     
     T, X = SEIIaR_commuter(M,X_0,tN,dt)
 

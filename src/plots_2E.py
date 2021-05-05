@@ -59,21 +59,23 @@ def plot_10_cities(T,X,path):
     
     ax[2,0].set_ylabel(r"Number of people")
     
-    ax[4,0].set_xlabel(r"$T [\mathrm{days}]$")
-    ax[4,1].set_xlabel(r"$T [\mathrm{days}]$")
+    ax[4,0].set_xlabel(r"$t [\mathrm{days}]$")
+    ax[4,1].set_xlabel(r"$t [\mathrm{days}]$")
 
     plt.tight_layout()
 
     fig.savefig(FIG_PATH + path)
 
-def plot_infections(T,array_path, path):
+def plot_infections(T_path,array_path, path):
 
+    T = np.load(DATA_PATH + T_path)
+    
     # first, join all the simulated runs:
 
-    I = np.zeros(10,len(T))
+    I = np.zeros((10,len(T)))
 
-    for i in range(10):
-        I[i] = np.load(DATA_PATH + array_path +f"_{i}.npy")
+    for i in range(1,11):
+        I[i-1] = np.load(DATA_PATH + array_path +f"_{i}.npy")
     
     fig = plt.figure()
     plt.plot(T,I[0], label = r"$\mathcal{N}(t)$",color ="blue")

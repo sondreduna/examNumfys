@@ -4,6 +4,7 @@ from plots_2A import *
 beta = 0.25
 tau  = 10
 
+@nb.njit()
 def sir_rhs(t,v):
     return np.array([- beta * v[0] * v[1],
                      beta * v[0] *v[1] - v[1]/tau,

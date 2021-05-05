@@ -60,7 +60,7 @@ def log_slope(x,y):
     x = x
     y = np.log(y)
 
-    # Ignore the values at which y is nan, i.e. occuring when
+    # Ignore the values at which y is infinite, i.e. occuring when
     # we take np.log(0), which happens quite often (!)
     
     mask = np.isfinite(y)

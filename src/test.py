@@ -4,6 +4,96 @@ from prob_2C import *
 from prob_2D import *
 from prob_2E import *
 
+def test_timesteps():
+
+    beta = 0.25
+    tau  = 10
+    
+    # --- initial value for deterministic model ---
+    I = 1e-4
+    R = 0
+    S = 1 - I - R
+
+    v_0 = np.array([S,I,R])
+    # --- initial value for stochastic model    ---
+    
+    N    = 100000
+    I    = 10
+    
+    v_0_  = np.array([N - I,I,0])
+
+    # ---------------------------------------------
+    
+    tN  = 250
+    dts = np.logspace(-3,0.5,10)
+
+    # --- Reference solution at t = 300 ---
+
+    S_ = S_inf(beta,tau)
+    R_ = R_inf(beta,tau)
+
+    # ------------------------------------
+
+    errs = np.zeros((2,2,10))
+    batch = 100
+
+    for i,dt in enumerate(tqdm(dts)):
+        sir = SIRSolver(0,v_0,tN,dt,0.25,10)
+        T,v = sir()
+
+        errs[0,0,i] = np.abs(v[-1,0] - S_)
+        errs[1,0,i] = np.abs(v[-1,2] - R_)
+
+        T  = np.arange(0,tN + dt, dt)
+        v_ = np.zeros((len(T),3))
+        for j in range(batch):
+            _, V = stochSIR(v_0_,tN,dt,beta,tau)
+            v_ += 1/batch * V
+            
+        v_ = v_/N
+
+        errs[0,1,i] = np.abs(v_[-1,0] - S_)
+        errs[1,1,i] = np.abs(v_[-1,2] - R_)
+
+
+    np.save(DATA_PATH + "dts.npy", dts)
+    np.save(DATA_PATH + "errs.npy", errs)
+
+def plot_timestep():
+
+    dts = np.load(DATA_PATH + "dts.npy")
+    errs = np.load(DATA_PATH + "errs.npy")
+
+    fig = plt.figure()
+
+    plt.scatter(dts, errs[0,0,:],
+            marker = "1",
+            color = "blue",
+            label = r"$|S(250) - S(\infty)|$ Deterministic")
+    plt.scatter(dts, errs[1,0,:],
+            marker = "2",
+            color = "red", 
+            label = r"$|R(250) - R(\infty)|$ Deterministic")
+    plt.scatter(dts,
+            errs[0,1,:],
+            marker = "1",color = "green", 
+            label = r"$|S(250) - S(\infty)|$ Stochastic")
+    plt.scatter(dts, 
+            errs[1,1,:],
+            marker = "2",
+            color = "yellow",
+            label = r"$|R(250) -R(\infty)|$ Stochastic")
+
+    plt.xscale("log")
+    plt.yscale("log")
+
+    plt.grid(ls = "--")
+    plt.legend()
+    plt.tight_layout()
+
+    fig.savefig(FIG_PATH + "timestep.pdf")
+
+
 def test_SEIIaR():
 
     """
@@ -91,7 +181,7 @@ def plot_sir_comparison(T,v,Ts,V):
     
     ax.grid(ls ="--")
     
-    ax.set_xlabel(r"$T [\mathrm{days}]$")
+    ax.set_xlabel(r"$t [\mathrm{days}]$")
     ax.set_ylabel(r"Fraction of population")
     
     plt.legend()
@@ -162,4 +252,4 @@ if __name__ == "__main__":
 
     # test greedy commuter:
 
-    test_greedy_commuter()
+    # test_greedy_commuter()

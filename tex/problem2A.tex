@@ -4,7 +4,7 @@
 
 The ODE-solver I chose to use is the one I made for exercise $2$, as I am very familiar with this, and found it working reasonably good for these kind of purposes. The implementation is an object-oriented version of the solver methods shown in the lectures and should be easily understood by the documentation in \lstinline|ode.py|.
 
-I solve the deterministic SIR equations in terms of fractions of people. As seen in figure \ref{fig:SIR} the asymptotic expressions for $S(t)$ and $R(t)$ as given in the exam-sheet \cite{sheet}. The expressions for $S(\infty)$ and $R(\infty)$ are solved using the non-linear equation solver \lstinline|fsolve| from \lstinline|scipy|.
+I solve the deterministic SIR equations in terms of fractions of people. As seen in figure \ref{fig:SIR} the asymptotic expressions for $S(t)$ and $R(t)$ as given in the exam-sheet \cite{sheet}. The expressions for $S(\infty)$ and $R(\infty)$ are solved using the non-linear equation solver \lstinline|fsolve| from \lstinline|scipy|, with initial guesses $0.5$ for both.
 
 \begin{figure}[htb]
 	\centering
@@ -53,7 +53,7 @@ As seen from figure \ref{fig:SIR}, the peak of the infected people is rather clo
 	\caption{Finding the largest beta keeping $\max I$ \textit{less} than 0.2.}
 \end{algorithm} 
 
-This procedure is by no means any advanced piece of algorithm, but it ensures that beta is increased when the maximum of $I$ is less than $0.2$, and decreased when it is larger than $0.2$. Further, it also ensures that the "nudging" of beta in each step is less when the error is less. To get an estimate for the \textit{largest} $\beta$ one can have to keep $I/N$ \textit{less} than $0.2$, one should start off with an initial value $\beta_0$ for which the peak is less than $0.2$, so that one reaches the limit from below. Using $\beta_0 = 0.2$, one finds with this the maximum value of $\beta = 0.28020370$, as given in table \ref{tab:2Acd} together with the deviation $0.2 - \max_{t\in[0,180]} I(t)$ this value gives rise to.  
+This procedure is by no means any advanced piece of algorithm, but it ensures that $\beta$ is increased when the maximum of $I$ is less than $0.2$, and decreased when it is larger than $0.2$. Further, it also ensures that the "nudging" of beta in each step is less when the error is less. To get an estimate for the \textit{largest} $\beta$ one can have to keep $I/N$ \textit{less} than $0.2$, one should start off with an initial value $\beta_0$ for which the peak is less than $0.2$, so that one reaches the limit from below. Using $\beta_0 = 0.2$, one finds with the maximum value of $\beta = 0.28020370$, as given in table \ref{tab:2Acd} together with the deviation $0.2 - \max_{t\in[0,180]} I(t)$ this value gives rise to.  
 
 
 %\begin{figure}[htb]
@@ -70,7 +70,7 @@ To find the minimum fraction of vaccinated people preventing an outbreak, $R(0)/
 \begin{algorithm}[H]
 	Choose a starting value for $R(0) = R_0$\;
 	Run the simulation of the SIR with the same parameters as in 2Aa, except with $R(0) = R_0$ \;
-	Calculate the \texttt{slope} of the fraction of infected people in a semi-log plot for the first $15$\footnote{As people are typically sick for $10$ days ($\tau = 10$) I suppose this time scale is long enough.} days of the simulation\;
+	Calculate the \texttt{slope} of the fraction of infected people in a semi-log plot for the first $15$\footnote{As people are typically sick for $10$ days ($\tau = 10$) I regard this time scale as long enough to detect whether the outbreak grows exponentially or decays.} days of the simulation\;
 	If the initial slope is negative it indicates that the outbreak dies out by itself\;
 	\While{\texttt{slope}$ > 0$}{
 		$R(0) \gets R \cdot 2 ^{\texttt{slope}}$ \;
@@ -78,6 +78,8 @@ To find the minimum fraction of vaccinated people preventing an outbreak, $R(0)/
 	Recalculate the \texttt{slope} in the semi-log axes.\;}
 	\caption{Finding the minimum fraction of initially vaccinated people for outbreaks to be impossible.}
 \end{algorithm} 
+
+The value of $R(0)/N$ preventing an outbreak found from this procedure is $0.59987499$, as shown in table \ref{tab:2Acd} together with the slope in the semi-log plot which this fraction yields for $I(t)$. This is obtained from running the procedure with $R_0 = 0.1$.
 
 \begin{table}[htb]
 	\centering

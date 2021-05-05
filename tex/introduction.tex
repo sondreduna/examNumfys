@@ -1,0 +1,88 @@
+The topic of this project is epidemic modelling, and we will study various different models. A short introduction to these are given in this introduction, mostly for introducing notation and presenting some choices in the implementation. For a more detailed introduction, consult the problem sheet \cite{sheet}.
+
+\subsection{The deterministic SIR model}
+The SIR model reads 
+\begin{subequations}\label{eq:SIR}
+\begin{align}
+	\der{S}{t} &= - \beta \frac{I S}{N}\\
+	\der{I}{t} &= \beta \frac{IS }{N} - I/\tau \\
+	\der{R}{t} &= I/\tau, 
+\end{align}
+\end{subequations}
+where $\beta$ is the rate at which susceptible people encounter infected people, and become infected, and $\tau$ is the typical duration of the infection. To solve this equation numerically, we recast it as a system of ODE's by defining the vector $\mathbf{v} = [S,I,R]^T$, such that the equations in \ref{eq:SIR} simplify to
+\begin{equation}
+	\der{\mathbf{v}(t)}{t} = \frac{\mathrm{d}}{\mathrm{d}t} \begin{bmatrix}
+		S(t) \\
+		I(t) \\
+		R(t)
+	\end{bmatrix}
+	= \begin{bmatrix}
+		- \beta IS/N \\
+		\beta  IS/N - I/\tau \\
+		I/\tau
+	\end{bmatrix} = \begin{bmatrix}
+		-\beta v_1 v_2 /N \\
+		\beta v_1 v_2 - v_2/\tau \\
+		v_1 / \tau
+	\end{bmatrix}= \mathbf{f}(\mathbf{v},t).
+\end{equation}
+
+\subsection{The stochastic SIR model}
+
+For the stochastic SIR model we have probabilities instead of rates. The probabilities for a susceptible person becoming infected, and an infected person recovering during an interval of $\Delta t$ are given by
+\begin{subequations}
+	\begin{align}
+		P_{S\to I} &= 1- \exp{(-\Delta t \beta I /N)} \\
+		P_{S\to R} &= 1- \exp{(-\Delta t /\tau)},
+	\end{align}
+\end{subequations}
+respectively. The transition to next time step is then governed by 
+\begin{subequations}
+	\begin{align}
+		S(t + \Delta t) &= S(t) - \Delta_{S\to I} \\
+		I(t + \Delta t) &= I(t) + \Delta_{S\to I} - \Delta_{I\to R} \\
+		R(t + \Delta t) &= R(t) + \Delta_{I \to R}, \\
+	\end{align}
+\end{subequations}
+where the $\Delta$'s are drawn from binomial distributions:
+\begin{subequations}
+	\begin{align*}
+		\Delta_{S\to I } &= \mathcal{B}(S,P_{S \to I}) \\
+		\Delta_{I\to R } &= \mathcal{B}(S,P_{I \to R}).
+	\end{align*}
+\end{subequations}
+
+\subsection{The stochastic SEIIaR model}
+
+For the stochastic SEIIaR model we follow essentially the same line of thought as for the stochastic SIR model, except that we include $E$ : exposed people, that cannot infect others, and $I_a$ : infected but asymptomatic people. The probabilities for the different transitions happening during an interval $\Delta t$ are
+\begin{subequations}
+	\begin{align}
+		P_{S\to E} &= 1- \exp{\left(-\Delta t \beta \frac{r_s I + r_a I_a}{N}\right)} \\
+		P_{E\to I} &=  f_s \times (1- \exp{(-\Delta t /\tau_E)}) \\
+		P_{E\to I_a} &= f_a \times (1- \exp{(-\Delta t/\tau_E)}) \\
+		P_{I\to R} &= 1- \exp{(-\Delta t /\tau_I)} \\
+		P_{I_a\to R} &= 1- \exp{(-\Delta t/\tau_I)}, 
+	\end{align}
+\end{subequations}
+with the different parameters $r_a,r_s,f_a,f_s,\tau_E,\tau_I$ given in \cite{sheet}. As before, 
+\begin{subequations}
+	\begin{align*}
+		\Delta_{S\to E  } &= \mathcal{B}(S,P_{S \to E}) \\
+		\Delta_{I\to R  } &= \mathcal{B}(I,P_{I \to R}) \\
+		\Delta_{I_a\to R} &= \mathcal{B}(I_a,P_{I_a \to R}).
+	\end{align*}
+\end{subequations}
+and 
+\begin{equation}
+	\Delta_{E \to I}, \Delta_{E \to I_a}, \Delta_{E \to _E} = \mathcal{M}(E,(P_{E\to I},P_{E\to I_a}, (1- P_{E\to I} - P_{E\to I_a}))),
+\end{equation}
+where $\mathcal{M}$ denotes a multinomial distribution, as described in \cite{sheet}. The changes of the different variables during an interval $\Delta t$ are then given by
+\begin{subequations}
+	\begin{align}
+		S(t + \Delta t) &= S(t) - \Delta_{S\to E} \\
+		E(t + \Delta t) &= E(t) + \Delta_{S\to E} - \Delta_{E\to I} - \Delta_{E \to I_a} \\
+		I(t + \Delta t) &= I(t) + \Delta_{E\to I} - \Delta_{I\to R} \\
+		I_a(t + \Delta t) &= I_a(t) + \Delta_{E\to I_a} - \Delta_{I_a\to R} \\
+		R(t + \Delta t) &= R(t) + \Delta_{I_a \to R} + \Delta_{I \to R}. \\
+	\end{align}
+\end{subequations}

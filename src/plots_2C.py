@@ -16,7 +16,7 @@ def plot_sir_comp(T,v,Ts,V):
     
     ax.grid(ls ="--")
     
-    ax.set_xlabel(r"$T [\mathrm{days}]$")
+    ax.set_xlabel(r"$t [\mathrm{days}]$")
     ax.set_ylabel(r"Fraction of population")
     
     plt.legend()
@@ -55,7 +55,7 @@ def plot_seiiar(Ts,V):
     
     ax.grid(ls ="--")
     
-    ax.set_xlabel(r"$T [\mathrm{days}]$")
+    ax.set_xlabel(r"$t [\mathrm{days}]$")
     ax.set_ylabel(r"Fraction of population")
     
     plt.legend()

@@ -14,7 +14,7 @@ def plot_sir(T,v,S_,R_):
     
     ax.grid(ls ="--")
     
-    ax.set_xlabel(r"$T [\mathrm{days}]$")
+    ax.set_xlabel(r"$t [\mathrm{days}]$")
     ax.set_ylabel(r"Fraction of population")
     
     plt.legend()
@@ -31,10 +31,11 @@ def plot_infected(T,v):
             label = r"$I(t) = I(0)\exp{\left( \frac{t}{\tau} (\mathcal{R}_0 - 1)\right)}$", 
             color = "black", 
             ls ="--")
+    
     ax.set_yscale("log")
     ax.grid(ls ="--")
     
-    ax.set_xlabel(r"$T [\mathrm{days}]$")
+    ax.set_xlabel(r"$t [\mathrm{days}]$")
     ax.set_ylabel(r"Fraction of population")
     
     plt.legend()

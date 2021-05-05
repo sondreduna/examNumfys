@@ -127,6 +127,12 @@ def outbreak_probability():
     
     This is described more thoroughly in the report. 
 
+    Returns
+    -------
+    P : array
+        Probability of an outbreak for I = 1,...,10.
+    stds : array
+        The associated standard deviation for each of these estimates.
     """
 
     Is = np.arange(1,11,dtype = int)

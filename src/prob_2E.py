@@ -221,7 +221,9 @@ def big_population_sim(ind, homeoffice = False):
     M   = M.astype("int64")
     
     # choose a moderately high dt to
-    # be even able to run the simulation
+    # be able to run the simulation in
+    # a reasonable amount of time.
+    # With these parameters, one run takes approximately 12 minutes. 
     
     tN = 180
     dt = 0.01  
@@ -244,7 +246,12 @@ if __name__ == "__main__":
     # ten_city_sim()
 
     # provide an index to the function call
-    # so that 10 simulations can be run simultaneously
+    # so that 10 simulations can be run simultaneously,
+    # e.g. on linux run :
+
+    # for i in {1..10}; do python prob_2E.py $i &done;
+    
+    # with either the line below prob b or the one below prob c uncommented.
     
     index = sys.argv[1]
     index = int(index)

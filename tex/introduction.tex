@@ -30,14 +30,14 @@ where $\beta$ is the rate at which susceptible people encounter infected people,
 \subsection{The stochastic SIR model}
 
 For the stochastic SIR model we have probabilities instead of rates. The probabilities for a susceptible person becoming infected, and an infected person recovering during an interval of $\Delta t$ are given by
-\begin{subequations}
+\begin{subequations}\label{eq:Psir}
 	\begin{align}
 		P_{S\to I} &= 1- \exp{(-\Delta t \beta I /N)} \\
 		P_{S\to R} &= 1- \exp{(-\Delta t /\tau)},
 	\end{align}
 \end{subequations}
 respectively. The transition to next time step is then governed by 
-\begin{subequations}
+\begin{subequations}\label{eq:sir_disc}
 	\begin{align}
 		S(t + \Delta t) &= S(t) - \Delta_{S\to I} \\
 		I(t + \Delta t) &= I(t) + \Delta_{S\to I} - \Delta_{I\to R} \\
@@ -48,9 +48,39 @@ where the $\Delta$'s are drawn from binomial distributions:
 \begin{subequations}
 	\begin{align*}
 		\Delta_{S\to I } &= \mathcal{B}(S,P_{S \to I}) \\
-		\Delta_{I\to R } &= \mathcal{B}(S,P_{I \to R}).
+		\Delta_{I\to R } &= \mathcal{B}(I,P_{I \to R}).
 	\end{align*}
 \end{subequations}
+To see the connection between this model and the deterministic one, suppose $\Delta t \times \beta \ll 1$, and $\Delta t/\tau \ll 1$. In that case, the probabilities in equation \eqref{eq:Psir} are \textit{almost} 0, 
+\begin{subequations}
+	\begin{align}
+		P_{S\to I} &\simeq \Delta t \beta I/N \\
+		P_{I\to R} &\simeq \Delta t/\tau. 
+	\end{align}
+\end{subequations}
+In the limit where $n\to \infty$\footnote{More formally, $n\to \infty$ and $p\to 0$ in such a fashion that the product $np$ is finite. }, the binomial distribution with $n$ samples and probability $p$ converges to a Poisson distribution with $\lambda = np$ \cite{Wassermann}, i.e. 
+\begin{subequations}
+	\begin{align}
+		\Delta_{S\to I} &\to \mathrm{Pois}(SI \Delta t \beta/N) \\
+		\Delta_{I\to R} &\to \mathrm{Pois}(I \Delta t/\tau).
+	\end{align}
+\end{subequations}
+As the pdf of the Poisson-distribution is given by $p(k\vert \lambda) = \lambda^k \mathrm{e}^{-\lambda}/k!$, we can find expressions for the Delta's if we assume them to attain the mean value of the Possion distributions, namely $\lambda$:
+\begin{subequations}
+	\begin{align}
+		\Delta_{S\to I} &\simeq SI \Delta t \beta/N  \\
+		\Delta_{I\to R} &\simeq I \Delta t/\tau.
+	\end{align}
+\end{subequations}
+Hence, the discrete transition equations \eqref{eq:sir_disc} are 
+\begin{subequations}\label{eq:sir_disc}
+	\begin{align}
+		S(t + \Delta t) &\simeq S(t) - SI \Delta t \beta/N\\
+		I(t + \Delta t) &\simeq I(t) + SI \Delta t \beta/N - I \Delta t/\tau \\
+		R(t + \Delta t) &\simeq R(t) + I \Delta t/\tau, \\
+	\end{align}
+\end{subequations}
+which yields the same equations as the deterministic ones in \eqref{eq:SIR}, by formally taking the limit $\Delta t \to 0$.
 
 \subsection{The stochastic SEIIaR model}
 
@@ -74,7 +104,7 @@ with the different parameters $r_a,r_s,f_a,f_s,\tau_E,\tau_I$ given in \cite{she
 \end{subequations}
 and 
 \begin{equation}
-	\Delta_{E \to I}, \Delta_{E \to I_a}, \Delta_{E \to _E} = \mathcal{M}(E,(P_{E\to I},P_{E\to I_a}, (1- P_{E\to I} - P_{E\to I_a}))),
+	\Delta_{E \to I}, \Delta_{E \to I_a}, \Delta_{E \to E} = \mathcal{M}(E,(P_{E\to I},P_{E\to I_a}, (1- P_{E\to I} - P_{E\to I_a}))),
 \end{equation}
 where $\mathcal{M}$ denotes a multinomial distribution, as described in \cite{sheet}. The changes of the different variables during an interval $\Delta t$ are then given by
 \begin{subequations}
@@ -86,3 +116,6 @@ where $\mathcal{M}$ denotes a multinomial distribution, as described in \cite{sh
 		R(t + \Delta t) &= R(t) + \Delta_{I_a \to R} + \Delta_{I \to R}. \\
 	\end{align}
 \end{subequations}
+To denote a state of the system, I will use $\mathbf{X} = [S,E,I,I_a,R]^T$. 
+
+\vspace{2cm}

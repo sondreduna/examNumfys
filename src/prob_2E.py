@@ -280,7 +280,7 @@ if __name__ == "__main__":
 
     
     # after having run the ten simulations, separately, run
-    # plot_infections("2Eb_T.npy","2Eb_inf","2Eb_N.pdf")
+    plot_infections("2Eb_T.npy","2Eb_inf","2Eb_N.pdf")
     # and
     plot_infections("2Eb_T_ho.npy","2Eb_inf_ho","2Ec_N.pdf")
 

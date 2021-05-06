@@ -68,7 +68,7 @@ def test_timesteps():
             toc = time()
             v_ += 1/batch * V
 
-            time_spent = 1/batch * (toc - tic)
+            time_spent += 1/batch * (toc - tic)
             
         v_ = v_/N
 
@@ -146,7 +146,7 @@ def plot_timestep():
             marker = "^",
             ls = "--",
             color = "blue", 
-            label = r"$|I(10) - I_{\mathrm{ref}}(25)|$ Stochastic")
+            label = r"$|I(10) - I_{\mathrm{ref}}(10)|$ Stochastic")
     
     ax2.scatter(dts, 
             errs[1,1,:],

@@ -2,15 +2,15 @@ The source code for this project is structured into separate files for each sub-
 
 \subsection{Remarks on performance}
 
-In many parts I gained a lot of performance by compiling the code with \lstinline|numba|, as usual.
+In many parts I gained a lot of performance by compiling the code with \lstinline|numba|, as usual. 
 
-My solution for solving the commuter model worked reasonably well in problem 2D, but when I reached problem 2E I found it to be \textit{very} memory consuming, as I store the number of people in each state for each group of people for each time step, that is an array of size
+My solution for solving the commuter model worked reasonably well in problem 2D, but when I reached problem 2E I found it to be \textit{very} memory consuming, as I store the number of people in each state for each group of people for each time step, which amounts to an array of size
 $$
 	\#\text{time steps}\times\#\text{towns} \times\#\text{towns} \times 5.
 $$ 
-For the population structure in problem 2Eb this yields an array of approximately $4.7$ GiB when using $1000$ time steps. To avoid these memory issues I modify the solver to only save the number of people in each state for each group of people for the current and previous time step. This allows for running lower time steps, and importantly, it makes it possible to run the $10$ simulations in parallel. 
+For the population structure in problem 2Eb this yields an array of approximately $4.7$ GiB when using $1000$ time steps. To avoid these memory issues I modify the solver to only save the number of people in each state for each group of people for the current and previous time step. This allows for running short time steps without any memory issues, which, importantly,  makes it possible to run the $10$ simulations in parallel. 
 
-From profiling the code used in problem 2Eb I found that the most time consuming part was the stepping function which draws random numbers for each entry in the table. I initially tried to draw these random numbers in a vectorised fashion, but found I it to become exceedingly confusing to understand what the functions were doing in each step, and I got some issues with people disappearing from the population. However, I found major improvements by modifying the line where I step forward using the function \lstinline|SEIIaR_commuter_step()| to the following:
+From profiling the code used in problem 2Eb I found that the most time consuming part was the stepping function which draws random numbers for each entry in the matrix. I initially tried to draw these random numbers in a vectorised fashion, but found I it exceedingly hard to understand what the functions were doing when providing multidimensional inputs, and I started to get issues with people disappearing from the population. However, I found major improvements just by modifying the line where I step forward using the function \lstinline|SEIIaR_commuter_step()| to the following:
 \begin{lstlisting}[language=Python]
 if M[l,k] == 0:
     X[l,k,:] = X_[l,k,:]
@@ -18,7 +18,7 @@ else:
     X[l,k,:] = SEIIaR_commuter_step(X_[l,k,:],Pse[k],Pei,Peia,Pir,Piar)
 \end{lstlisting} 
 
-This is particularly useful in this case, as there are \textit{many} entries in the matrix where there are no people at all. Testing with and without this change, with a step length of $0.1$ yields the following results:
+This is particularly useful in the case of problem 2Eb and c, as there are \textit{many} entries in the matrix where there are no people at all (see figure \ref{fig:matrices} for an illustration of the population structure). Testing with and without this change, with a step length of $0.1$ yields the following results:
 \begin{lstlisting}
 # Solution without skipping empty entries
 dt = 0.1
@@ -33,3 +33,10 @@ dt = 0.1
 \end{lstlisting}
 \texttt{\small CPU times: user 22.4 s, sys: 58.5 ms, total: 22.5 s
 Wall time: 22.4 s}
+
+%Although not a central part of the solver at all, I found a very neat way of expressing and calculating the inital state of a system, given the population matrix. To initialise all people in the suscpetible state, one use the tensorproduct:
+%$$
+%	\mathbf{X}_0 = \mathbf{M} \odot \mathbf{X},
+%$$
+%where $\mathbf{X} = [1,0,0,0,0]^T$ and $\mathbf{M}$ is the $m\times m$ dimensional population matrix. This yields the initial state $\mathbf{X}_0$ for all groups of people, i.e. the $m\times m\times 5$ matrix. This can be calulcated in \lstinline|numpy| by using \lstinline|np.tensordot(M,X,axes = 0)|. Creating the initial state in a "brute force" fashion is seen to be much slower: 
+

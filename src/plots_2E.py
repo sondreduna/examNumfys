@@ -81,7 +81,7 @@ def plot_infections(T_path,array_path, path):
     plt.plot(T,np.mean(I,axis=0), label = r"$\overline{\mathcal{N}}(t)$",color ="blue")
     
     for i in range(len(I)):
-        plt.plot(T,I[i],color= "blue",alpha = 0.5)
+        plt.plot(T,I[i],color= "blue",alpha = 0.4)
         
     plt.xlabel(r"$t [\mathrm{days}]$")
     plt.ylabel(r"$\mathcal{N}(t)$")
@@ -93,5 +93,24 @@ def plot_infections(T_path,array_path, path):
 
     fig.savefig(FIG_PATH + path)
     
-    
+def plot_matrices():
+
+    pop  = np.genfromtxt('../data/population_structure.csv', delimiter=',')
+    pop2 = np.genfromtxt('../data/population_structure_ho.csv', delimiter=',')
+
+    fig, ax = plt.subplots(ncols = 2, figsize = (14,7))
+
+    ax[0].set_title(r"\textbf{Normal population structure}")
+    ax[1].set_title(r"\textbf{Population structure, $90\%$ home office}")
+
+    # add small number to each entry to get finite values
+    # for the entries being 0 
+    ax[0].imshow(np.log(pop + 1e-16))
+    ax[1].imshow(np.log(pop2 + 1e-16))
+
+    ax[0].axis("scaled")
+    ax[1].axis("scaled")
+
+    plt.tight_layout()
+    fig.savefig("../fig/matrices.pdf")
     

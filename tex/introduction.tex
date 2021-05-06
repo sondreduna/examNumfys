@@ -9,7 +9,7 @@ The SIR model describes the evolution of \textbf{S}usceptible, \textbf{I}nfected
 	\der{R}{t} &= I/\tau, 
 \end{align}
 \end{subequations}
-where $\beta$ is the rate at which susceptible people encounter infected people, and become infected, and $\tau$ is the typical duration of the infection. To solve this equation numerically, we recast it as a system of ODE's by defining the vector $\mathbf{v} = [S,I,R]^T$, such that the equations in \ref{eq:SIR} simplify to
+where $\beta$ is the rate at which susceptible people encounter infected people, and become infected, and $\tau$ is the typical duration of the infection. To solve these equations numerically, we recast it to a system of ODE's by defining the vector $\mathbf{v} = [S,I,R]^T$, such that the equations in \ref{eq:SIR} simplify to
 \begin{equation}\label{eq:sir_vect}
 	\der{\mathbf{v}(t)}{t} = \frac{\mathrm{d}}{\mathrm{d}t} \begin{bmatrix}
 		S(t) \\
@@ -29,7 +29,7 @@ where $\beta$ is the rate at which susceptible people encounter infected people,
 
 \subsection{The stochastic SIR model}\label{sec:stochsirtheory}
 
-For the stochastic SIR model we have probabilities instead of rates. The probabilities for a susceptible person becoming infected, and an infected person recovering during an interval of $\Delta t$ are given by
+For the stochastic SIR model we have probabilities instead of rates. The probabilities for a susceptible person becoming infected, and an infected person recovering during a time $\Delta t$ are given by
 \begin{subequations}\label{eq:Psir}
 	\begin{align}
 		P_{S\to I} &= 1- \exp{(-\Delta t \beta I /N)} \\
@@ -51,7 +51,7 @@ where the $\Delta$'s are drawn from binomial distributions:
 		\Delta_{I\to R } &= \mathcal{B}(I,P_{I \to R}).
 	\end{align*}
 \end{subequations}
-To see the connection between this model and the deterministic one, suppose $\Delta t \times \beta \ll 1$, and $\Delta t/\tau \ll 1$. In that case, the probabilities in equation \eqref{eq:Psir} are in the first approximation given by
+To see the connection between this model and the deterministic one, suppose $\Delta t  \beta \ll 1$, and $\Delta t/\tau \ll 1$. In that case, the probabilities in equation \eqref{eq:Psir} are in the first approximation given by
 \begin{subequations}
 	\begin{align}
 		P_{S\to I} &\simeq \Delta t \beta I/N \\
@@ -65,7 +65,7 @@ In the limit where $n\to \infty$\footnote{More formally, $n\to \infty$ and $p\to
 		\Delta_{I\to R} &\to \mathrm{Pois}(I \Delta t/\tau).
 	\end{align}
 \end{subequations}
-We can find expressions for the $\Delta$s if we assume them to attain the mean value of the Poisson distributions, namely $\lambda$:
+We can find expressions for the $\Delta$'s if we assume them to attain the mean value of the Poisson distributions, namely $\lambda$:
 \begin{subequations}
 	\begin{align}
 		\Delta_{S\to I} &\simeq SI \Delta t \beta/N  \\

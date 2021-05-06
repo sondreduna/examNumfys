@@ -3,6 +3,7 @@ import numba as nb
 from scipy.optimize import fsolve
 from tqdm import tqdm
 from time import time
+import pandas as pd 
 
 DATA_PATH = "../data/"
 FIG_PATH  = "../fig/"

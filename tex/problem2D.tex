@@ -151,14 +151,14 @@ To check that the system behaves as expected, we simulate the same scenario, onl
 
 The time-evolution of the different variables are shown in figure \ref{fig:test_commuter}, in which it is apparent that the exposed people in the small city never infect those in the large city, as we expect. Furthermore, we see that the epidemic in area $1$ evolves slower in this case --- the peak of the infected is delayed by approximately $25$ days. This is also as expected, since more potential carriers of infection are available when the two towns mix during daytime. The expected behaviour is also observed when the exposed start out in area $2$, but a plot of this is not included, for brevity. 
 
-To do a second test we let $9999$ of the people living in town $1$ work in town $2$, and leave only one working in town $1$\footnote{The reason I leave one worker in town $1$ is that having $0$ people in area $1$ at daytime makes the solver break down, as we divide by $0$ in the expression for $P_{S\to E}$}. That is, we use the population matrix in equation \eqref{eq:test_matrix_2}
+To do a second test we let all the $10000$ of the people living in town $1$ work in town $2$. That is, we use the population matrix in equation \eqref{eq:test_matrix_2}
 \begin{equation}\label{eq:test_matrix_2}
 	\mathbf{\overline{M}} = \begin{bmatrix}
-		1 & 9999 \\
+		0 & 10000 \\
 		0 & 100000 
 	\end{bmatrix}.
 \end{equation}
-We simulate the same situation, with $25$ of the $9999$ people initially exposed. This should make the evolution of the variables approximately in sync. This is indeed what we observe, in figure \ref{fig:test_commuter_2}, as the number of infected people in each town are closely synced.
+We simulate the same situation, with $25$ of the $10000$ people initially exposed. This should make the evolution of the variables approximately in sync. This is indeed what we observe, in figure \ref{fig:test_commuter_2}, as the number of infected people in each town are closely synced.
 
 \begin{figure}[htb]
 	\centering

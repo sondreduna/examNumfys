@@ -82,8 +82,16 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
             I = np.sum(I, axis = 0)
             Pse = 1 - np.exp(- dt * beta * 1/N * ( rs * I[:,0] + ra * I[:,1] ))
             for k in range(m):
-                for l in range(m):        
-                    X[k,l,:] = SEIIaR_commuter_step(X_[k,l,:],Pse[k],Pei,Peia,Pir,Piar)
+                if N[k] == 0:
+                    X[k,:,:] = X_[k,:,:]
+                    continue
+                
+                for l in range(m):
+                    if M[k,l] == 0:
+                        # do nothing when there are no people in this group
+                        X[k,l,:] = X_[k,l,:]
+                    else:
+                        X[k,l,:] = SEIIaR_commuter_step(X_[k,l,:],Pse[k],Pei,Peia,Pir,Piar)
 
             # numba cannot handle multiple axis at once in the np.sum function,
             # therefore, I nest the sums  
@@ -106,8 +114,16 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
 
             Pse = 1 - np.exp(- dt * beta * 1/N * ( rs * I[:,0] + ra * I[:,1] ))
             for k in range(m):
-                for l in range(m):        
-                    X[l,k,:] = SEIIaR_commuter_step(X_[l,k,:],Pse[k],Pei,Peia,Pir,Piar)
+                if N[k] == 0:
+                    X[:,k,:] = X_[:,k,:]
+                    continue
+                
+                for l in range(m):
+                    if M[l,k] == 0:
+                        # do nothing when there are no people in this group 
+                        X[l,k,:] = X_[l,k,:]
+                    else:
+                        X[l,k,:] = SEIIaR_commuter_step(X_[l,k,:],Pse[k],Pei,Peia,Pir,Piar)
 
             inf  = np.sum(np.sum(X[:,:,2:4],axis = 1),axis = -1)
             mask = inf > 10
@@ -223,7 +239,7 @@ def big_population_sim(ind, homeoffice = False):
     # choose a moderately high dt to
     # be able to run the simulation in
     # a reasonable amount of time.
-    # With these parameters, one run takes approximately 12 minutes. 
+    # With these parameters, one run takes approximately 3-4 minutes. 
     
     tN = 180
     dt = 0.01  
@@ -266,5 +282,5 @@ if __name__ == "__main__":
     # after having run the ten simulations, separately, run
     # plot_infections("2Eb_T.npy","2Eb_inf","2Eb_N.pdf")
     # and
-    # plot_infections("2Eb_T_ho.npy","2Eb_inf_ho","2Ec_N.pdf")
+    plot_infections("2Eb_T_ho.npy","2Eb_inf_ho","2Ec_N.pdf")
 

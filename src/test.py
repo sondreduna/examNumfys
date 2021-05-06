@@ -7,7 +7,8 @@ from prob_2E import *
 def test_timesteps():
     """
     Simple test to figure out what timesteps are 
-    feasible for the stochastic model. 
+    feasible for the stochastic model. Use the 
+    equation for early stages of I as a reference solution.
 
     """
 
@@ -29,36 +30,50 @@ def test_timesteps():
 
     # ---------------------------------------------
     
-    tN  = 250
-    dts = np.logspace(-3,0.5,10)
+    tN  = 10
+    dts = np.logspace(-4,2,10)
 
-    # --- Reference solution at t = 300 ---
+    # --- Reference solution at t = 25 ---
 
-    S_ = S_inf(beta,tau)
-    R_ = R_inf(beta,tau)
+    I_ = Iexp(tN,1e-4,beta,tau)
 
     # ------------------------------------
 
     errs = np.zeros((2,2,10))
-    batch = 100
+    batch = 200
+
+    dt = 0.01
+
+    # do one call initially to not count the compilation time
+    _, V = stochSIR(v_0_,tN,dt,beta,tau)
+    sir = SIRSolver(0,v_0,tN,dt,0.25,10)
+    T,v = sir()
 
     for i,dt in enumerate(tqdm(dts)):
         sir = SIRSolver(0,v_0,tN,dt,0.25,10)
+        tic = time()
         T,v = sir()
+        toc = time()
 
-        errs[0,0,i] = np.abs(v[-1,0] - S_)
-        errs[1,0,i] = np.abs(v[-1,2] - R_)
+        errs[0,0,i] = np.abs(v[-1,1] - I_)
+        errs[1,0,i] = toc - tic
 
         T  = np.arange(0,tN + dt, dt)
         v_ = np.zeros((len(T),3))
+        time_spent = 0
         for j in range(batch):
+            
+            tic = time()
             _, V = stochSIR(v_0_,tN,dt,beta,tau)
+            toc = time()
             v_ += 1/batch * V
+
+            time_spent = 1/batch * (toc - tic)
             
         v_ = v_/N
 
-        errs[0,1,i] = np.abs(v_[-1,0] - S_)
-        errs[1,1,i] = np.abs(v_[-1,2] - R_)
+        errs[0,1,i] = np.abs(v_[-1,1] - I_)
+        errs[1,1,i] = time_spent
 
 
     np.save(DATA_PATH + "dts.npy", dts)
@@ -113,31 +128,43 @@ def plot_timestep():
     dts = np.load(DATA_PATH + "dts.npy")
     errs = np.load(DATA_PATH + "errs.npy")
 
-    fig = plt.figure()
-
-    plt.scatter(dts, errs[0,0,:],
-            marker = "1",
+    fig,ax = plt.subplots()
+    ax2 = ax.twinx()
+    
+    ax.plot(dts, errs[0,0,:],
+            marker = "v",
+            ls = "-.",
             color = "blue",
-            label = r"$|S(250) - S(\infty)|$ Deterministic")
-    plt.scatter(dts, errs[1,0,:],
-            marker = "2",
-            color = "red", 
-            label = r"$|R(250) - R(\infty)|$ Deterministic")
-    plt.scatter(dts,
-            errs[0,1,:],
-            marker = "1",color = "green", 
-            label = r"$|S(250) - S(\infty)|$ Stochastic")
-    plt.scatter(dts, 
-            errs[1,1,:],
-            marker = "2",
-            color = "yellow",
-            label = r"$|R(250) -R(\infty)|$ Stochastic")
+            label = r"$|I(10) - I_{\mathrm{ref}}(10)|$ Deterministic")
 
-    plt.xscale("log")
-    plt.yscale("log")
+    ax2.scatter(dts, errs[1,0,:],
+            marker = "v",
+            color = "red")
+    
+    ax.plot(dts,
+            errs[0,1,:],
+            marker = "^",
+            ls = "--",
+            color = "blue", 
+            label = r"$|I(10) - I_{\mathrm{ref}}(25)|$ Stochastic")
+    
+    ax2.scatter(dts, 
+            errs[1,1,:],
+            marker = "^",
+            color = "red")
+
+    ax.set_ylabel("Global error",color ="blue")
+    
+    ax2.set_xscale("log")
+    ax2.set_yscale("log")
+    ax2.set_ylabel("Runtime [seconds]",color ="red")
+
+    ax.set_xscale("log")
+    ax.set_yscale("log")
 
     plt.grid(ls = "--")
-    plt.legend()
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15),
+          ncol=2, fancybox=True, shadow=True)
     plt.tight_layout()
 
     fig.savefig(FIG_PATH + "timestep.pdf")
@@ -154,7 +181,8 @@ def plot_timestep_deterministic():
             color = "blue",
             label = r"\texttt{error} Deterministic")
 
-    ax.legend()
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15),
+          ncol=2, fancybox=True, shadow=True)
 
     ax2 = ax.twinx()
     ax2.scatter(dts, errs[1,:],
@@ -299,9 +327,9 @@ def test_commuter():
 
     E = 25
 
-    M = np.array([[1,9999],[0,100000]])
+    M = np.array([[0,10000],[0,100000]])
     X_0 = np.tensordot(M,np.array([1,0,0,0,0]),axes = 0)
-    X_0[0,1] = np.array([9999-E,E,0,0,0])
+    X_0[0,1] = np.array([10000-E,E,0,0,0])
 
     tN = 180
     dt = 0.002

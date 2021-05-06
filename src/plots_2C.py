@@ -37,6 +37,17 @@ def add_seiiar(ax,Ts,vs):
 def plot_seiiar(Ts,V):
     fig, ax = plt.subplots()
 
+    # plot the deterministic solution as well:
+
+    T = np.load(DATA_PATH + "2Aa_T.npy")
+    v = np.load(DATA_PATH + "2Aa_v.npy")
+
+    S,I,R = v[:,:].T
+
+    ax.plot(T,S, color = "blue")
+    ax.plot(T,I, color = "red")
+    ax.plot(T,R, color = "green")
+    
     N = len(V)
 
     Ss,Es,Is,Ias,Rs = V[0,:,:].T

@@ -115,11 +115,17 @@ def SEIIaR_commuter(M,X_0,tN,dt):
 
             # Night simulation
             
-            N = np.sum(M,axis = 0)
+            N = np.sum(M,axis = 0)            
             I = X[i+j,:,:,2:4]
-            I = np.sum(I, axis = 0)
+            I = np.sum(I, axis = 0)            
             Pse = 1 - np.exp(- dt * beta * 1/N * ( rs * I[:,0] + ra * I[:,1] ))
+            
             for k in range(m):
+                # If there are no people in the current town, Pse will be nan,
+                # so the value should be the same as the previous value 
+                if N[k] == 0:
+                    X[i+j+1,k,:,:] = X[i+j,k,:,:]
+                    continue
                 for l in range(m):
                     X[i+j+1,k,l,:] = SEIIaR_commuter_step(X[i+j,k,l,:],Pse[k],Pei,Peia,Pir,Piar)
 
@@ -134,6 +140,11 @@ def SEIIaR_commuter(M,X_0,tN,dt):
             I = np.sum(I, axis = 1)
             Pse = 1 - np.exp(- dt * beta * 1/N * ( rs * I[:,0] + ra * I[:,1] ))
             for k in range(m):
+                # If there are no people in the current town, Pse will be nan,
+                # so the value should be the same as the previous value 
+                if N[k] == 0:
+                    X[i+j+1,:,k,:] = X[i+j,:,k,:]
+                    continue
                 for l in range(m):
                     X[i+j+1,l,k,:] = SEIIaR_commuter_step(X[i+j,l,k,:],Pse[k],Pei,Peia,Pir,Piar)
 

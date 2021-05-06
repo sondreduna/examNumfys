@@ -1,7 +1,7 @@
-The topic of this project is epidemic modelling, and we will study various different models. A short introduction to these are given in this introduction, mostly for introducing notation and presenting some choices in the implementation. For a more detailed introduction, consult the problem sheet \cite{sheet}.
+The topic of this project is epidemic modelling. A short introduction to the models under consideration are given in this introduction, mostly for introducing notation and presenting some choices in the implementation. For a more detailed introduction, consult the problem sheet \cite{sheet}.
 
 \subsection{The deterministic SIR model}
-The SIR model reads 
+The SIR model describes the evolution of \textbf{S}usceptible, \textbf{I}nfected and \textbf{R}ecovered people in an epidemic. The model reads
 \begin{subequations}\label{eq:SIR}
 \begin{align}
 	\der{S}{t} &= - \beta \frac{I S}{N}\\
@@ -23,17 +23,17 @@ where $\beta$ is the rate at which susceptible people encounter infected people,
 	\end{bmatrix} = \begin{bmatrix}
 		-\beta v_1 v_2 /N \\
 		\beta v_1 v_2 - v_2/\tau \\
-		v_1 / \tau
+		v_2 / \tau
 	\end{bmatrix}= \mathbf{f}(t,\mathbf{v}).
 \end{equation}
 
-\subsection{The stochastic SIR model}
+\subsection{The stochastic SIR model}\label{sec:stochsirtheory}
 
 For the stochastic SIR model we have probabilities instead of rates. The probabilities for a susceptible person becoming infected, and an infected person recovering during an interval of $\Delta t$ are given by
 \begin{subequations}\label{eq:Psir}
 	\begin{align}
 		P_{S\to I} &= 1- \exp{(-\Delta t \beta I /N)} \\
-		P_{S\to R} &= 1- \exp{(-\Delta t /\tau)},
+		P_{I\to R} &= 1- \exp{(-\Delta t /\tau)},
 	\end{align}
 \end{subequations}
 respectively. The transition to next time step is then governed by 
@@ -51,7 +51,7 @@ where the $\Delta$'s are drawn from binomial distributions:
 		\Delta_{I\to R } &= \mathcal{B}(I,P_{I \to R}).
 	\end{align*}
 \end{subequations}
-To see the connection between this model and the deterministic one, suppose $\Delta t \times \beta \ll 1$, and $\Delta t/\tau \ll 1$. In that case, the probabilities in equation \eqref{eq:Psir} are \textit{almost} 0, 
+To see the connection between this model and the deterministic one, suppose $\Delta t \times \beta \ll 1$, and $\Delta t/\tau \ll 1$. In that case, the probabilities in equation \eqref{eq:Psir} are in the first approximation given by
 \begin{subequations}
 	\begin{align}
 		P_{S\to I} &\simeq \Delta t \beta I/N \\
@@ -65,22 +65,22 @@ In the limit where $n\to \infty$\footnote{More formally, $n\to \infty$ and $p\to
 		\Delta_{I\to R} &\to \mathrm{Pois}(I \Delta t/\tau).
 	\end{align}
 \end{subequations}
-As the pdf of the Poisson-distribution is given by $p(k\vert \lambda) = \lambda^k \mathrm{e}^{-\lambda}/k!$, we can find expressions for the Delta's if we assume them to attain the mean value of the Possion distributions, namely $\lambda$:
+We can find expressions for the $\Delta$s if we assume them to attain the mean value of the Poisson distributions, namely $\lambda$:
 \begin{subequations}
 	\begin{align}
 		\Delta_{S\to I} &\simeq SI \Delta t \beta/N  \\
 		\Delta_{I\to R} &\simeq I \Delta t/\tau.
 	\end{align}
 \end{subequations}
-Hence, the discrete transition equations \eqref{eq:sir_disc} are 
-\begin{subequations}\label{eq:sir_disc}
+Hence, the discrete transition equations \eqref{eq:sir_disc} are then  
+\begin{subequations}
 	\begin{align}
-		S(t + \Delta t) &\simeq S(t) - SI \Delta t \beta/N\\
-		I(t + \Delta t) &\simeq I(t) + SI \Delta t \beta/N - I \Delta t/\tau \\
-		R(t + \Delta t) &\simeq R(t) + I \Delta t/\tau, \\
+		S(t + \Delta t) - S(t) &\simeq  - SI \Delta t \beta/N\\
+		I(t + \Delta t) - I(t)&\simeq  + SI \Delta t \beta/N - I \Delta t/\tau \\
+		R(t + \Delta t) -  R(t)&\simeq + I \Delta t/\tau, \\
 	\end{align}
 \end{subequations}
-which yields the same equations as the deterministic ones in \eqref{eq:SIR}, by formally taking the limit $\Delta t \to 0$.
+which yields the same equations as the deterministic ones in \eqref{eq:SIR}, by dividing all equations by $\Delta t$ and formally taking the limit $\Delta t \to 0$.
 
 \subsection{The stochastic SEIIaR model}
 

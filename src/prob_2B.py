@@ -189,6 +189,19 @@ if __name__ == "__main__":
     np.save(DATA_PATH + "2Ba_T.npy",Ts) 
     np.save(DATA_PATH + "2Ba_V.npy",V)
 
+    # save initial slopes in a .csv file:
+
+    slopes = np.zeros(10)
+    for i in range(10):
+        slopes[i] = log_slope(Ts[:5000],V[i,:5000,1])
+
+    avg_slopes    = np.zeros(2)
+    avg_slopes[0] = np.mean(slopes)
+    avg_slopes[1] = np.std(slopes)
+    
+    df = pd.DataFrame(columns = ["Logslope", "Deviation"],data = [avg_slopes])
+    df.to_csv(DATA_PATH + "slopes.csv")
+
     T = np.load(DATA_PATH + "2Aa_T.npy")
     v = np.load(DATA_PATH + "2Aa_v.npy") 
     

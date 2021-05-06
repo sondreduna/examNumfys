@@ -20,9 +20,9 @@ For the early developments of the epidemic, the expression for $I$ can be simpli
 	\der{I}{t} = (\beta - 1/\tau) I.
 \end{equation}
 The solution of this equation is given by
-$$
+\begin{equation}\label{eq:Iexp}
 	I(t) = I(0) \exp{\left(\left[ \beta \tau - 1 \right] \frac{t}{\tau}\right)} = I(0) \exp{\left(\left[ \mathcal{R}_0 - 1 \right] \frac{t}{\tau} \right)},
-$$
+\end{equation}
 where we have introduced $\mathcal{R}_0 = \beta\tau$. As seen in figure \ref{fig:Infected}, the fraction of infected people matches this expression quite closely during the first $40$ days or so. This confirms the exponential growth in the beginning. 
 
 \begin{figure}[htb]
@@ -39,21 +39,22 @@ As seen from figure \ref{fig:SIR}, the peak of the infected people is rather clo
 \begin{algorithm}[H]
 	Choose a starting value for $\beta = \beta_0$\;
 	Choose a tolerance $\texttt{tol}$\;
-	Run the simulation of the SIR with the same parameters as in 2Aa, except with $\beta = \beta_0$.\;
-	Calculate $\mathcal{I} \coloneqq \max_{t\in[0,180]} I(t)$.\;
+	Run the simulation of the SIR with the same parameters as in 2Aa, except with $\beta = \beta_0$\;
+	Calculate $\mathcal{I} \coloneqq \max_{t\in[0,180]} I(t)$\;
 	\While{\texttt{err }$\coloneqq | \mathcal{I} - 0.2 | > \texttt{tol}$}{
 		\eIf{
 			$\mathcal{I} > 0.2$
 			}
 			{$\beta\gets \beta \cdot 2^{\texttt{err}}$}
-			{$\beta\gets \beta \cdot 2^{-\texttt{err}}$}	
+			{$\beta\gets \beta \cdot 2^{-\texttt{err}}$}
+		Run the simulation of the SIR with the same parameters as in 2Aa, except with the new value for $\beta$\;
+		Recalculate $\mathcal{I} \coloneqq \max_{t\in[0,180]} I(t)$\;	
 		}
-		Run the simulation of the SIR with the same parameters as in 2Aa, except with the new value for $\beta$.\;
-		Recalculate $\mathcal{I} \coloneqq \max_{t\in[0,180]} I(t)$.\;
+		
 	\caption{Finding the largest beta keeping $\max I$ \textit{less} than 0.2.}
 \end{algorithm} 
 
-This procedure is by no means any advanced piece of algorithm, but it ensures that $\beta$ is increased when the maximum of $I$ is less than $0.2$, and decreased when it is larger than $0.2$. Further, it also ensures that the "nudging" of beta in each step is less when the error is less. To get an estimate for the \textit{largest} $\beta$ one can have to keep $I/N$ \textit{less} than $0.2$, one should start off with an initial value $\beta_0$ for which the peak is less than $0.2$, so that one reaches the limit from below. Using $\beta_0 = 0.2$, one finds with the maximum value of $\beta = 0.28020370$, as given in table \ref{tab:2Acd} together with the deviation $0.2 - \max_{t\in[0,180]} I(t)$ this value gives rise to.  
+This procedure is by no means any advanced piece of algorithm, but it ensures that $\beta$ is increased when the maximum of $I$ is less than $0.2$, and decreased when it is larger than $0.2$. Further, it also ensures that the "nudging" of beta in each step is less when the error is less. To get an estimate for the \textit{largest} $\beta$ one can have to keep $I/N$ \textit{less} than $0.2$, one should start off with an initial value $\beta_0$ for which the peak is less than $0.2$, so that one reaches the limit from below. Using $\beta_0 = 0.2$, one finds with the maximum value of $\beta = 0.228020370$, as given in table \ref{tab:2Acd} together with the deviation $0.2 - \max_{t\in[0,180]} I(t)$ this value gives rise to.  
 
 
 %\begin{figure}[htb]
@@ -86,10 +87,10 @@ The value of $R(0)/N$ preventing an outbreak found from this procedure is $0.599
 	\caption{The maximum value of $\beta$ giving a peak less than $0.2$ of the infected fraction, and the minimum value of $R(0)$ (vaccinated) avoiding exponential growth.}
 	\begin{tabular}{cccc}
 		\toprule
-		Parameter & value & $0.2 - \max_{t\in[0,180]} I(t)$ & Initial $\log$-slope \\
+		\textbf{Parameter} & \textbf{Value} & $0.2 - \max_{t\in[0,180]} I(t)$ & \textbf{Initial $\log$-slope} \\
 		\midrule
-		$\beta$ & $0.28020370$ & $8.319\cdot 10^{-7}$ & --- \\
-		$R(0)$  & $0.59987499$ & --- & $-1.74\cdot 10^{-15}$ \\
+		$\beta$ & $0.228020370$ & $8.319\cdot 10^{-7}$ & --- \\
+		$R(0)$  & $0.599874991$ & --- & $-1.74\cdot 10^{-15}$ \\
 		\bottomrule
 	\end{tabular}
 	\label{tab:2Acd}

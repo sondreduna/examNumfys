@@ -45,7 +45,7 @@ def SEIIaRstep(V,N,dt,rs):
     Dei,Deia,Dee = np.random.multinomial(V[1], (Pei,Peia,1-Pei-Peia) )
     Dir          = np.random.binomial(V[2], Pir)
     Diar         = np.random.binomial(V[3], Piar)
-
+    """
     D = np.array([-Dse,-Dei-Deia+Dse,-Dir+Dei, -Diar+Deia,Dir+Diar])
     return V + D
     """
@@ -54,7 +54,7 @@ def SEIIaRstep(V,N,dt,rs):
                      V[2] - Dir + Dei,
                      V[3] - Diar + Deia,
                      V[4] + Dir + Diar])
-    """
+    
 @nb.njit()
 def SEIIaR(v_0,tN,dt,rs):
     """

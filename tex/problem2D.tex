@@ -54,7 +54,7 @@ To implement the Stochastic SEIIaR Commuter model, I choose the following proced
 			}
 			Do a normal SEIIaR step for each group of people $\alpha,\beta=1,\dots,m$, exactly as described in the introduction to update to the present state $X_{(i+j+1)\alpha\beta\gamma}$\;   
 		$i \gets i + S$\;
-		\For{$j = 0,\dots, S - 1$}
+		\For{$j = 1,\dots, S $}
 			{
 			Repeat the procedure in the loop above, but with $\alpha \leftrightarrow \beta$, i.e. perform the sums over the \textit{third} not \textit{second} axis of $\mathbf{X}$, and the \textit{second} of $\mathbf{M}$. \;
 			}
@@ -214,6 +214,7 @@ To implement the Stochastic SEIIaR Commuter model, I choose the following proced
 %
 %    return T, X
 %\end{lstlisting}
+For more details on exactly how this is implemented in \lstinline|python| I refer you the code in \lstinline|prob_2D.py|.
 
 To check that the system behaves as expected, we simulate the same scenario, only with another matrix which now represents \textit{no} flow of workers to the other areas during daytime:
 \begin{equation}\label{eq:test_matrix}
@@ -222,7 +223,6 @@ To check that the system behaves as expected, we simulate the same scenario, onl
 		0 & 100000 
 	\end{bmatrix}.
 \end{equation}
-
 The time-evolution of the different variables are shown in figure \ref{fig:test_commuter}, in which it is apparent that the exposed people in the small city never infect those in the large city, as we expect. The expected behaviour is also observed when the exposed start out in area $2$, but a plot of this is not included, for brevity. 
 
 To do a second test we let all the $10000$ of the people living in town $1$ work in town $2$. That is, we use the population matrix in equation \eqref{eq:test_matrix_2}
@@ -233,7 +233,6 @@ To do a second test we let all the $10000$ of the people living in town $1$ work
 	\end{bmatrix}.
 \end{equation}
 We simulate the same situation, with $25$ of the $10000$ people initially exposed. This should make the evolution of the variables approximately in sync. This is indeed what we observe, in figure \ref{fig:test_commuter_2}, as the number of infected people in each town are more in sync than in figure \ref{fig:commuter_2city}.
-
 
 \begin{figure}[htb]
 	\centering
@@ -249,5 +248,11 @@ We simulate the same situation, with $25$ of the $10000$ people initially expose
 	\label{fig:test_commuter_2}
 \end{minipage}
 \end{figure}
+
+Another quick check I made, which was even more crucial when dealing with the larger matricies in the proceeding problems, was to check that the number of people in each town are the same for each time step: 
+\begin{lstlisting}[language=Python]
+assert( np.all(np.sum(X, axis = (2,-1)) == np.sum(M,axis = 1)) ).
+\end{lstlisting}
+I also used this test in modifying the commuter solver for problem 2Eb, to check that it was consistent with this requirement.
 
 \clearpage

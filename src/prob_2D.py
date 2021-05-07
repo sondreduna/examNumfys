@@ -3,7 +3,7 @@ from plots_2D import *
 
 beta  = 0.55
 ra    = 0.1
-rs    = 1.
+rs    = 1.0
 fs    = 0.6
 fa    = 0.4
 tau_E = 3
@@ -40,7 +40,7 @@ def SEIIaR_commuter_step(X,Pse,Pei,Peia,Pir,Piar):
     Dei,Deia,Dee = np.random.multinomial(X[1], (Pei,Peia,1-Pei-Peia) )
     Dir          = np.random.binomial(X[2], Pir)
     Diar         = np.random.binomial(X[3], Piar)
-
+    """
     D = np.array([- Dse,
                   - Dei - Deia + Dse,
                   - Dir + Dei,
@@ -53,7 +53,7 @@ def SEIIaR_commuter_step(X,Pse,Pei,Peia,Pir,Piar):
                      X[2] - Dir + Dei,
                      X[3] - Diar + Deia,
                      X[4] + Dir + Diar])
-    """
+
     
 @nb.njit()
 def SEIIaR_commuter(M,X_0,tN,dt):
@@ -107,6 +107,9 @@ def SEIIaR_commuter(M,X_0,tN,dt):
     step_length = int(1/(2*dt))
     days       = int(tN)
     
+    N_day   = np.sum(M,axis = 0)
+    N_night = np.sum(M,axis = 1)
+    
     for day in range(days):
 
         i = day * 2 * step_length # current start index
@@ -114,16 +117,15 @@ def SEIIaR_commuter(M,X_0,tN,dt):
         for j in range(step_length):
 
             # Night simulation
-            
-            N = np.sum(M,axis = 0)            
+                    
             I = X[i+j,:,:,2:4]
             I = np.sum(I, axis = 0)            
-            Pse = 1 - np.exp(- dt * beta * 1/N * ( rs * I[:,0] + ra * I[:,1] ))
+            Pse = 1 - np.exp(- dt * beta * 1/N_night * ( rs * I[:,0] + ra * I[:,1] ))
             
             for k in range(m):
                 # If there are no people in the current town, Pse will be nan,
                 # so the value should be the same as the previous value 
-                if N[k] == 0:
+                if N_night[k] == 0:
                     X[i+j+1,k,:,:] = X[i+j,k,:,:]
                     continue
                 for l in range(m):
@@ -134,15 +136,14 @@ def SEIIaR_commuter(M,X_0,tN,dt):
         for j in range(step_length):
 
             # Day simulation 
-            
-            N = np.sum(M,axis = 1)
+        
             I = X[i+j,:,:,2:4]
             I = np.sum(I, axis = 1)
-            Pse = 1 - np.exp(- dt * beta * 1/N * ( rs * I[:,0] + ra * I[:,1] ))
+            Pse = 1 - np.exp(- dt * beta * 1/N_day * ( rs * I[:,0] + ra * I[:,1] ))
             for k in range(m):
                 # If there are no people in the current town, Pse will be nan,
                 # so the value should be the same as the previous value 
-                if N[k] == 0:
+                if N_day[k] == 0:
                     X[i+j+1,:,k,:] = X[i+j,:,k,:]
                     continue
                 for l in range(m):

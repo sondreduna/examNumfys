@@ -78,10 +78,12 @@ def plot_infections(T_path,array_path, path):
         I[i-1] = np.load(DATA_PATH + array_path +f"_{i}.npy")
     
     fig = plt.figure()
-    plt.plot(T,np.mean(I,axis=0), label = r"$\overline{\mathcal{N}}(t)$",color ="blue")
+    
     
     for i in range(len(I)):
-        plt.plot(T,I[i],color= "blue",alpha = 0.4)
+        plt.plot(T,I[i],color= "blue",alpha = 0.5)
+
+    plt.plot(T,np.mean(I,axis=0), label = r"$\overline{\mathcal{N}}(t)$",color ="black")
         
     plt.xlabel(r"$t [\mathrm{days}]$")
     plt.ylabel(r"$\mathcal{N}(t)$")

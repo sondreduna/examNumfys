@@ -68,6 +68,9 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
     # more than 10 infected for each time step:
 
     infected   = np.zeros(n) 
+
+    N_day   = np.sum(M,axis = 0)
+    N_night = np.sum(M,axis = 1)
     
     for day in range(days):
 
@@ -77,12 +80,11 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
 
             # Night simulation
             
-            N = np.sum(M,axis = 0)
             I = X_[:,:,2:4]
             I = np.sum(I, axis = 0)
-            Pse = 1 - np.exp(- dt * beta * 1/N * ( rs * I[:,0] + ra * I[:,1] ))
+            Pse = 1 - np.exp(- dt * beta * 1/N_night * ( rs * I[:,0] + ra * I[:,1] ))
             for k in range(m):
-                if N[k] == 0:
+                if N_night[k] == 0:
                     X[k,:,:] = X_[k,:,:]
                     continue
                 
@@ -108,13 +110,12 @@ def SEIIaR_commuter_greedy(M,X_0,tN,dt):
 
             # Day simulation 
             
-            N = np.sum(M,axis = 1)
             I = X_[:,:,2:4]
             I = np.sum(I, axis = 1)
 
-            Pse = 1 - np.exp(- dt * beta * 1/N * ( rs * I[:,0] + ra * I[:,1] ))
+            Pse = 1 - np.exp(- dt * beta * 1/N_day * ( rs * I[:,0] + ra * I[:,1] ))
             for k in range(m):
-                if N[k] == 0:
+                if N_day[k] == 0:
                     X[:,k,:] = X_[:,k,:]
                     continue
                 
@@ -195,6 +196,10 @@ def ten_city_sim():
 
     for i in tqdm(range(10)):
         T, X = SEIIaR_commuter(M,X_0,tN,dt)
+
+        # check that no people have left the city!
+        assert( np.all(np.sum(X, axis = (2,-1)) == np.sum(M,axis = 1)) )
+        
         XX[i] = X
 
     np.save(DATA_PATH + "2Ea_XX.npy", XX)
@@ -239,7 +244,7 @@ def big_population_sim(ind, homeoffice = False):
     # choose a moderately high dt to
     # be able to run the simulation in
     # a reasonable amount of time.
-    # With these parameters, one run takes approximately 3-4 minutes. 
+    # With these parameters, one run takes approximately 3 minutes. 
     
     tN = 180
     dt = 0.01  
@@ -259,7 +264,7 @@ import sys
 if __name__ == "__main__":
     
     # prob a
-    # ten_city_sim()
+    ten_city_sim()
 
     # provide an index to the function call
     # so that 10 simulations can be run simultaneously,
@@ -280,7 +285,7 @@ if __name__ == "__main__":
 
     
     # after having run the ten simulations, separately, run
-    plot_infections("2Eb_T.npy","2Eb_inf","2Eb_N.pdf")
+    #plot_infections("2Eb_T.npy","2Eb_inf","2Eb_N.pdf")
     # and
-    plot_infections("2Eb_T_ho.npy","2Eb_inf_ho","2Ec_N.pdf")
+    #plot_infections("2Eb_T_ho.npy","2Eb_inf_ho","2Ec_N.pdf")
 

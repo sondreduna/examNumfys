@@ -1,2 +1,2 @@
 # examNumfys
-Home exam in numfys. 
+Home exam in computational physics.
